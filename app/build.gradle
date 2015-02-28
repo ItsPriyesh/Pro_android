@@ -1,8 +1,14 @@
 apply plugin: 'com.android.application'
+apply plugin: 'retrolambda'
 
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "io.prolabs.pro"
@@ -19,7 +25,26 @@ android {
     }
 }
 
+retrolambda {
+    jvmArgs '-noverify'
+
+    // jdk '/Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home'
+   // oldJdk '/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Content/Home'
+    //javaVersion JavaVersion.VERSION_1_6
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Google
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.google.code.gson:gson:2.3.+'
+
+    // Square
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'com.squareup:otto:1.3.6'
+    compile 'com.jakewharton.timber:timber:2.7.1'
+    compile 'com.jakewharton:butterknife:6.1.0'
+
 }
