@@ -1,17 +1,29 @@
 package io.prolabs.pro;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import timber.log.Timber;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    @InjectView(R.id.button)
+    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
+
+        button.setOnClickListener(v -> Timber.i("Clicked"));
+
     }
 
 
