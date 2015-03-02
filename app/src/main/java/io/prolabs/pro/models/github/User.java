@@ -10,5 +10,4 @@ public class User {
     public int getPublicRepoCount() {
         return publicReposCount;
     }
-
 }

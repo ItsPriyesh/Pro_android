@@ -7,11 +7,13 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.GitHubApi;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.Repo;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -37,16 +39,17 @@ public class MainActivity extends ActionBarActivity {
         button.setOnClickListener(v -> {
             username = usernameInput.getText().toString();
 
-            GitHubApi.getService().getUser(username, new Callback<User>() {
+            GitHubApi.getService().getRepoList(username, new Callback<List<Repo>>() {
                 @Override
-                public void success(User user, Response response) {
-                    Timber.i("" + user.getPublicRepoCount());
+                public void success(List<Repo> repos, Response response) {
+                    for (Repo repo : repos) Timber.i("" + repo.getStarCount());
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
 
                 }
+
             });
 
         });

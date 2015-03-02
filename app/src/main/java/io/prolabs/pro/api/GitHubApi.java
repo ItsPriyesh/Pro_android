@@ -32,10 +32,10 @@ public class GitHubApi {
 
     public interface GitHubService {
 
-        @GET("/users/{username}")
-        void getUser(@Path("username") String username, Callback<User> callback);
+        @GET("/users/{user}")
+        void getUser(@Path("user") String user, Callback<User> callback);
 
         @GET("/users/{user}/repos")
-        List<Repo> getRepoList(@Path("user") String user);
+        void getRepoList(@Path("user") String user, Callback<List<Repo>> callback);
     }
 }
