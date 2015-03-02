@@ -1,20 +1,32 @@
-package io.prolabs.pro;
+package io.prolabs.pro.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import io.prolabs.pro.R;
+import io.prolabs.pro.api.GitHubApi;
+import io.prolabs.pro.models.github.User;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import timber.log.Timber;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    @InjectView(R.id.username)
+    EditText usernameInput;
+
     @InjectView(R.id.button)
     Button button;
+
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +34,22 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
 
-        button.setOnClickListener(v -> Timber.i("Clicked"));
+        button.setOnClickListener(v -> {
+            username = usernameInput.getText().toString();
+
+            GitHubApi.getService().getUser(username, new Callback<User>() {
+                @Override
+                public void success(User user, Response response) {
+                    Timber.i("" + user.getPublicRepoCount());
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
+
+        });
 
     }
 
