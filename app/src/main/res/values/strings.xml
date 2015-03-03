@@ -3,4 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="prefs_password">WeShouldChangeThisAtSomePoint</string>
+    <string name="title_activity_base_tool_bar">BaseToolBarActivity</string>
 </resources>

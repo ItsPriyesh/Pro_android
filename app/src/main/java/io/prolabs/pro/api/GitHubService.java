@@ -19,4 +19,5 @@ public interface GitHubService {
     @GET("/user")
     void getAuthUser(Callback<User> callback);
 
+   // @GET("users/{user}/{repo}/languages")
 }

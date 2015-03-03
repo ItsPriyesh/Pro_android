@@ -1,25 +1,52 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/username"
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/toolbar" />
+
+    <TextView
+        android:id="@+id/loginPrompt"
+        android:visibility="invisible"
+        android:layout_margin="32dp"
+        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:layout_width="wrap_content"
+        android:gravity="center"
         android:layout_height="wrap_content"
-        android:text="Click"
-        android:id="@+id/button"/>
+        android:textSize="14dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Login using GitHub to get started with Pro!" />
 
-</LinearLayout>
+    <FrameLayout
+        android:layout_centerInParent="true"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/splashContainer"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_centerInParent="true"
+            style="@style/ProgressBar.Custom.Download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textSize="12dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Preparing important things..."
+            android:layout_below="@id/progress"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</RelativeLayout>

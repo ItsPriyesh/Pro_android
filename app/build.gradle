@@ -35,6 +35,7 @@ dependencies {
     // Google
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.code.gson:gson:2.3.+'
+    compile 'com.android.support:cardview-v7:21.0.+'
 
     // Square
     compile 'com.squareup.retrofit:retrofit:1.9.0'
@@ -42,5 +43,7 @@ dependencies {
     compile 'com.squareup:otto:1.3.6'
     compile 'com.jakewharton.timber:timber:2.7.1'
     compile 'com.jakewharton:butterknife:6.1.0'
+
+    compile 'com.orhanobut:hawk:1.4-SNAPSHOT'
 
 }

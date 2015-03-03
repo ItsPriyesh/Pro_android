@@ -1,0 +1,73 @@
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_margin="16dp"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        card_view:cardCornerRadius="4dp">
+
+        <RelativeLayout
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/githubLogo"
+                android:adjustViewBounds="false"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:src="@drawable/logo_github" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_below="@id/githubLogo"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@android:color/black"
+                android:layout_marginBottom="16dp" />
+
+            <io.prolabs.pro.ui.common.FloatingHintEditText
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_below="@id/divider"
+                android:hint="Username"
+                android:fontFamily="sans-serif-light"
+                android:id="@+id/usernameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <io.prolabs.pro.ui.common.FloatingHintEditText
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="Password"
+                android:fontFamily="sans-serif-light"
+                android:inputType="textPassword"
+                android:id="@+id/passwordInput"
+                android:layout_below="@id/usernameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/passwordInput"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/borderlessButtonStyle"
+                android:text="Login"
+                android:textColor="@color/accent"
+                android:id="@+id/loginButton" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

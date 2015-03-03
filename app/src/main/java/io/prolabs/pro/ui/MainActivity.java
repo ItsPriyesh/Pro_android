@@ -1,87 +1,70 @@
 package io.prolabs.pro.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
+import android.os.Handler;
+import android.view.View;
+import android.view.animation.AnimationUtils;
 
-import butterknife.ButterKnife;
+import com.orhanobut.hawk.Hawk;
+
 import butterknife.InjectView;
+import io.prolabs.pro.ProApp;
 import io.prolabs.pro.R;
-import io.prolabs.pro.api.GitHubApi;
-import io.prolabs.pro.api.GitHubService;
-import io.prolabs.pro.models.github.User;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import io.prolabs.pro.ui.common.BaseToolbarActivity;
+import io.prolabs.pro.ui.login.LoginFragment;
 import timber.log.Timber;
 
+public class MainActivity extends BaseToolbarActivity {
 
-public class MainActivity extends ActionBarActivity {
+    @InjectView(R.id.splashContainer)
+    View splashContainer;
 
-    @InjectView(R.id.username)
-    EditText usernameInput;
+    @InjectView(R.id.loginPrompt)
+    View loginPrompt;
 
-    @InjectView(R.id.password)
-    EditText passwordInput;
-    @InjectView(R.id.button)
-    Button button;
+    private boolean authExists = false;
 
-    private String username;
-    private String password;
-
-    private GitHubService gitHubService;
+    final Handler handler = new Handler();
+    final Runnable authCheckComplete = () -> onAuthCheckComplete();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
+        setToolbarTitle("Pro");
 
-        button.setOnClickListener(v -> {
-            username = usernameInput.getText().toString();
-            password = passwordInput.getText().toString();
-
-            gitHubService = GitHubApi.getService(username, password);
-
-            gitHubService.getAuthUser(new Callback<User>() {
-                @Override
-                public void success(User user, Response response) {
-                    Timber.i("Private repos " + user.getPrivateReposCount());
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-
-                }
-            });
-
-        });
-
+        splashContainer.setVisibility(View.VISIBLE);
+        checkAuthExists();
     }
 
+    private void setupLoginFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.turn_up, R.anim.turn_up)
+                .add(R.id.container, new LoginFragment())
+                .commit();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        loginPrompt.startAnimation(AnimationUtils.loadAnimation(this, R.anim.abc_slide_in_top));
+        loginPrompt.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void checkAuthExists() {
+        new Thread() {
+            public void run() {
+                Hawk.init(getApplicationContext(), getString(R.string.prefs_password));
+                authExists = Hawk.contains(ProApp.AUTH_KEY);
+                handler.post(authCheckComplete);
+            }
+        }.start();
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    private void onAuthCheckComplete() {
+        splashContainer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.throw_up));
+        splashContainer.setVisibility(View.INVISIBLE);
+
+        if (authExists) { // An auth key already exists
+            Timber.i("Auth found");
+        } else { // No auth key was found, take user to login activity
+            setupLoginFragment();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }
