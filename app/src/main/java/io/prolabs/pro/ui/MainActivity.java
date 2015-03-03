@@ -7,13 +7,12 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.GitHubApi;
-import io.prolabs.pro.models.github.Repo;
+import io.prolabs.pro.api.GitHubService;
+import io.prolabs.pro.models.github.User;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -25,10 +24,15 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.username)
     EditText usernameInput;
 
+    @InjectView(R.id.password)
+    EditText passwordInput;
     @InjectView(R.id.button)
     Button button;
 
     private String username;
+    private String password;
+
+    private GitHubService gitHubService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +42,20 @@ public class MainActivity extends ActionBarActivity {
 
         button.setOnClickListener(v -> {
             username = usernameInput.getText().toString();
+            password = passwordInput.getText().toString();
 
-            GitHubApi.getService().getRepoList(username, new Callback<List<Repo>>() {
+            gitHubService = GitHubApi.getService(username, password);
+
+            gitHubService.getAuthUser(new Callback<User>() {
                 @Override
-                public void success(List<Repo> repos, Response response) {
-                    for (Repo repo : repos) Timber.i("" + repo.getStarCount());
+                public void success(User user, Response response) {
+                    Timber.i("Private repos " + user.getPrivateReposCount());
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
 
                 }
-
             });
 
         });
