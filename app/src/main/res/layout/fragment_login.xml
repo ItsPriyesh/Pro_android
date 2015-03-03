@@ -43,7 +43,9 @@
                 android:fontFamily="sans-serif-light"
                 android:id="@+id/usernameInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
 
             <io.prolabs.pro.ui.common.FloatingHintEditText
                 android:layout_marginLeft="16dp"
@@ -54,7 +56,9 @@
                 android:id="@+id/passwordInput"
                 android:layout_below="@id/usernameInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:singleLine="true" />
 
             <Button
                 android:layout_marginLeft="16dp"

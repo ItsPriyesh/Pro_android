@@ -1,5 +1,6 @@
 package io.prolabs.pro.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -10,9 +11,10 @@ import com.orhanobut.hawk.Hawk;
 import butterknife.InjectView;
 import io.prolabs.pro.ProApp;
 import io.prolabs.pro.R;
+import io.prolabs.pro.api.GitHubApi;
 import io.prolabs.pro.ui.common.BaseToolbarActivity;
 import io.prolabs.pro.ui.login.LoginFragment;
-import timber.log.Timber;
+import io.prolabs.pro.ui.profile.ProfileActivity;
 
 public class MainActivity extends BaseToolbarActivity {
 
@@ -61,9 +63,11 @@ public class MainActivity extends BaseToolbarActivity {
         splashContainer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.throw_up));
         splashContainer.setVisibility(View.INVISIBLE);
 
-        if (authExists) { // An auth key already exists
-            Timber.i("Auth found");
-        } else { // No auth key was found, take user to login activity
+        if (authExists) {
+            GitHubApi.getService(Hawk.get(ProApp.AUTH_KEY));
+            startActivity(new Intent(this, ProfileActivity.class));
+            finish();
+        } else {
             setupLoginFragment();
         }
     }

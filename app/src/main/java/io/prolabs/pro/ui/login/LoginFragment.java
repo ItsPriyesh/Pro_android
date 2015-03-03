@@ -1,11 +1,14 @@
 package io.prolabs.pro.ui.login;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -14,10 +17,10 @@ import io.prolabs.pro.R;
 import io.prolabs.pro.api.GitHubApi;
 import io.prolabs.pro.api.GitHubService;
 import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.ui.profile.ProfileActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import timber.log.Timber;
 
 public class LoginFragment extends Fragment {
 
@@ -43,21 +46,38 @@ public class LoginFragment extends Fragment {
     public void loginButtonClicked() {
         username = usernameInput.getText().toString();
         password = passwordInput.getText().toString();
-        Timber.i(username + password);
-        gitHubService = GitHubApi.getService(username, password);
 
+        if (username.equals("") || password.equals("")) {
+            Toast.makeText(getActivity(),
+                    "Please enter a username and password.", Toast.LENGTH_SHORT).show();
+        } else {
+            loginGitHub(username, password);
+        }
+    }
+
+    private void loginGitHub(String username, String password) {
+        gitHubService = GitHubApi.getService(username, password);
         gitHubService.getAuthUser(new Callback<User>() {
             @Override
             public void success(User user, Response response) {
                 GitHubApi.saveCurrentAuth();
-                Timber.i("Private repos " + user.getPrivateReposCount());
+                startActivity(new Intent(getActivity(), ProfileActivity.class));
+                getActivity().finish();
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                handleLoginError();
             }
         });
     }
 
+    private void handleLoginError() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Login failed")
+                .setMessage("We were unable to login to your GitHub account. " +
+                        "Make sure that the credentials you entered are correct.")
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                .create().show();
+    }
 }

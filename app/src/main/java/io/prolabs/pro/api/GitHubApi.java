@@ -38,6 +38,28 @@ public class GitHubApi {
         return gitHubService;
     }
 
+    public static GitHubService getService(String authKey) {
+        if (gitHubService == null) {
+            RestAdapter restAdapter = new RestAdapter.Builder()
+                    .setLogLevel(RestAdapter.LogLevel.FULL)
+                    .setClient(new OkClient(new OkHttpClient()))
+                    .setRequestInterceptor(request -> {
+                        request.addHeader(ACCEPT_HEADER_NAME, ACCEPT_HEADER_VALUE);
+                        request.addHeader(AUTH_HEADER_NAME, authKey);
+                    })
+                    .setEndpoint(BASE_URL)
+                    .build();
+
+            gitHubService = restAdapter.create(GitHubService.class);
+        }
+        return gitHubService;
+    }
+
+    public static GitHubService getService() {
+        if (gitHubService != null) return gitHubService;
+        else throw new IllegalAccessError("An authorized GitHub service has not been created");
+    }
+
     private static String generateAuthValue(String username, String password) {
         AUTH_HEADER_VALUE = "Basic " + Base64.encodeToString(
                 String.format("%s:%s", username, password).getBytes(), Base64.NO_WRAP);

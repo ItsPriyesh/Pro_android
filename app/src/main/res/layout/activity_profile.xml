@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.prolabs.pro.ui.profile.ProfileActivity">
+
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/toolbar"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/avatar"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="32dp"
+        android:layout_below="@id/toolbar"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        app:border_width="2dp"
+        app:border_color="@android:color/white"/>
+
+</RelativeLayout>

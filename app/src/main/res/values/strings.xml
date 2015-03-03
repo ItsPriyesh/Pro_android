@@ -7,4 +7,5 @@
 
     <string name="prefs_password">WeShouldChangeThisAtSomePoint</string>
     <string name="title_activity_base_tool_bar">BaseToolBarActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 </resources>
