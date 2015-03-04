@@ -5,6 +5,7 @@
     tools:context="io.prolabs.pro.ui.profile.InfoFragment">
 
     <LinearLayout
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
