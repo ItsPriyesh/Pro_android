@@ -9,17 +9,23 @@ import android.view.animation.AnimationUtils;
 import com.orhanobut.hawk.Hawk;
 
 import butterknife.InjectView;
+import butterknife.OnClick;
 import io.prolabs.pro.ProApp;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.GitHubApi;
 import io.prolabs.pro.ui.common.BaseToolbarActivity;
 import io.prolabs.pro.ui.login.LoginFragment;
 import io.prolabs.pro.ui.profile.ProfileActivity;
+import io.prolabs.pro.utils.NetworkUtils;
+import io.prolabs.pro.utils.ViewUtils;
 
 public class MainActivity extends BaseToolbarActivity {
 
     @InjectView(R.id.splashContainer)
     View splashContainer;
+
+    @InjectView(R.id.networkErrorContainer)
+    View networkErrorContainer;
 
     @InjectView(R.id.loginPrompt)
     View loginPrompt;
@@ -35,8 +41,23 @@ public class MainActivity extends BaseToolbarActivity {
         setContentView(R.layout.activity_main);
         setToolbarTitle("Pro");
 
-        splashContainer.setVisibility(View.VISIBLE);
-        checkAuthExists();
+        checkForInternet();
+    }
+
+    private void checkForInternet() {
+        if (ViewUtils.isVisible(networkErrorContainer)) ViewUtils.hide(networkErrorContainer);
+
+        if (NetworkUtils.isConnectedToInternet(this)) {
+            ViewUtils.show(splashContainer);
+            checkAuthExists();
+        } else {
+            ViewUtils.show(networkErrorContainer);
+        }
+    }
+
+    @OnClick(R.id.retry)
+    public void retryButtonClicked() {
+        checkForInternet();
     }
 
     private void setupLoginFragment() {
@@ -46,7 +67,7 @@ public class MainActivity extends BaseToolbarActivity {
                 .commit();
 
         loginPrompt.startAnimation(AnimationUtils.loadAnimation(this, R.anim.abc_slide_in_top));
-        loginPrompt.setVisibility(View.VISIBLE);
+        ViewUtils.show(loginPrompt);
     }
 
     private void checkAuthExists() {
@@ -61,7 +82,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void onAuthCheckComplete() {
         splashContainer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.throw_up));
-        splashContainer.setVisibility(View.INVISIBLE);
+        ViewUtils.hide(splashContainer);
 
         if (authExists) {
             GitHubApi.getService(Hawk.get(ProApp.AUTH_KEY));

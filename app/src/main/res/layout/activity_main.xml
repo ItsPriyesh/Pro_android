@@ -49,4 +49,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/networkErrorContainer"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/sadCloud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sad_cloud" />
+
+        <TextView
+            android:id="@+id/noInternetMessage"
+            android:textSize="12dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Pro was unable to connect to the interwebz."
+            android:layout_below="@id/sadCloud"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/retry"
+            android:text="Retry"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/noInternetMessage"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/accent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 </RelativeLayout>
