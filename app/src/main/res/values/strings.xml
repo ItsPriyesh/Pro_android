@@ -8,4 +8,7 @@
     <string name="prefs_password">WeShouldChangeThisAtSomePoint</string>
     <string name="title_activity_base_tool_bar">BaseToolBarActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

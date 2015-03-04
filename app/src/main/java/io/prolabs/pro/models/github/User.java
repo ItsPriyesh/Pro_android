@@ -14,7 +14,7 @@ public class User {
     private String name;
 
     @SerializedName("login")
-    private String login;
+    private String username;
 
     @SerializedName("avatar_url")
     private String avatarUrl;
@@ -23,8 +23,8 @@ public class User {
         return avatarUrl;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
     public String getName() {
