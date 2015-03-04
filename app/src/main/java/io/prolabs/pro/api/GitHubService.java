@@ -6,18 +6,14 @@ import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
 import retrofit.Callback;
 import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit.http.Query;
 
 public interface GitHubService {
-
-    @GET("/users/{user}")
-    void getUser(@Path("user") String user, Callback<User> callback);
-
-    @GET("/users/{user}/repos")
-    void getRepoList(@Path("user") String user, Callback<List<Repo>> callback);
 
     @GET("/user")
     void getAuthUser(Callback<User> callback);
 
-   // @GET("users/{user}/{repo}/languages")
+    @GET("/user/repos")
+    void getRepos(@Query("per_page") int perPage, Callback<List<Repo>> callback);
+
 }

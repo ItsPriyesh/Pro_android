@@ -5,10 +5,17 @@ import com.google.gson.annotations.SerializedName;
 public class Repo {
 
     @SerializedName("stargazers_count")
-    private int starCount;
+    private int stars;
 
-    public int getStarCount() {
-        return starCount;
+    @SerializedName("language")
+    private String language;
+
+    public int getStars() {
+        return stars;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 
 }

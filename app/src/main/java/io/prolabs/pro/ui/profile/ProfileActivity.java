@@ -1,5 +1,7 @@
 package io.prolabs.pro.ui.profile;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,12 +12,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.GitHubApi;
 import io.prolabs.pro.api.GitHubService;
+import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
 import io.prolabs.pro.ui.common.SlidingTabLayout;
 import retrofit.Callback;
@@ -41,8 +46,10 @@ public class ProfileActivity extends ActionBarActivity {
 
     private GitHubService gitHubService;
     private User user;
+    private List<Repo> repos;
     private InfoFragment infoFragment;
     private LanguagesFragment languagesFragment;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,27 +61,60 @@ public class ProfileActivity extends ActionBarActivity {
         languagesFragment = new LanguagesFragment();
 
         gitHubService = GitHubApi.getService();
-        gitHubService.getAuthUser(new Callback<User>() {
-            @Override
-            public void success(User user, Response response) {
-                setUser(user);
-                setupInterface();
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading data...");
+        progressDialog.show();
+        startApiCalls();
 
         tabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         tabLayout.setSelectedIndicatorColors(getResources().getColor(android.R.color.white));
         tabLayout.setDistributeEvenly(true);
     }
 
+    private void startApiCalls() {
+        getAuthUser();
+    }
+
+    private void getAuthUser() {
+        gitHubService.getAuthUser(new Callback<User>() {
+            @Override
+            public void success(User user, Response response) {
+                setUser(user);
+                getAuthUserRepos();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                handleApiCallError();
+            }
+        });
+    }
+
+    private void getAuthUserRepos() {
+        gitHubService.getRepos(GitHubApi.MAX_PER_PAGE, new Callback<List<Repo>>() {
+            @Override
+            public void success(List<Repo> repos, Response response) {
+                setRepos(repos);
+                setupInterface();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                handleApiCallError();
+            }
+        });
+    }
+
     private void setupInterface() {
+        if (progressDialog.isShowing()) progressDialog.dismiss();
+
+        infoFragment.setRepos(repos);
         infoFragment.setUser(user);
         languagesFragment.setUser(user);
+        languagesFragment.setRepos(repos);
 
         viewPager.setAdapter(new ProfilePagerAdapter(getSupportFragmentManager()));
         tabLayout.setViewPager(viewPager);
@@ -84,8 +124,20 @@ public class ProfileActivity extends ActionBarActivity {
         nameText.setText(user.getName());
     }
 
-    public void setUser(User user) {
+    private void handleApiCallError() {
+        new AlertDialog.Builder(this)
+                .setTitle("Network error")
+                .setMessage("An error occurred while fetching your data. Please try again.")
+                .setPositiveButton("Retry", (dialog, id) -> startApiCalls())
+                .create().show();
+    }
+
+    private void setUser(User user) {
         this.user = user;
+    }
+
+    private void setRepos(List<Repo> repos) {
+        this.repos = repos;
     }
 
     private class ProfilePagerAdapter extends FragmentPagerAdapter {
