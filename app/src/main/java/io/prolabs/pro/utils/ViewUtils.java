@@ -3,6 +3,7 @@ package io.prolabs.pro.utils;
 import android.view.View;
 
 public class ViewUtils {
+
     public static void hide(View view) {
         view.setVisibility(View.INVISIBLE);
     }
@@ -18,6 +19,5 @@ public class ViewUtils {
     public static boolean isHidden(View view) {
         return view.getVisibility() == View.INVISIBLE;
     }
-
 
 }

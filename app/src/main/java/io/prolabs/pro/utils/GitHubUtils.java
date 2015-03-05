@@ -1,11 +1,23 @@
 package io.prolabs.pro.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import io.prolabs.pro.api.GitHubApi;
+import io.prolabs.pro.api.GitHubService;
+import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import timber.log.Timber;
 
 public class GitHubUtils {
 
@@ -15,26 +27,31 @@ public class GitHubUtils {
         return totalStars;
     }
 
-    public static List<String> getTopLanguages(List<Repo> repos) {
-        HashMap<String, Integer> occurrences = new HashMap<>();
+    public static List<Language> getLanguages(String username, List<Repo> repos) {
+        GitHubService gitHubService = GitHubApi.getService();
+
         for (Repo repo : repos) {
-            String lang = repo.getLanguage();
-            if (lang != null) {
-                if (occurrences.containsKey(lang)) {
-                    occurrences.put(lang, occurrences.get(lang) + 1);
-                } else {
-                    occurrences.put(lang, 1);
+            gitHubService.getLanguages(username, repo.getName(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+                    //languages = GitHubUtils.parseLanguageResponse(jsonElement);
                 }
-            }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
+        }
+        Type type = new TypeToken<Map<String, Integer>>() {}.getType();
+        Map<String, Integer> responseMap = new Gson().fromJson(json.toString(), type);
+
+        List<Language> languages = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : responseMap.entrySet()) {
+            languages.add(new Language(entry.getKey(), entry.getValue()));
         }
 
-        List<String> topLanguages = new ArrayList<>(occurrences.keySet());
-        Collections.sort(topLanguages, (s1, s2) -> {
-            Integer occurrences1 = occurrences.get(s1);
-            Integer occurrences2 = occurrences.get(s2);
-            return occurrences2.compareTo(occurrences1);
-        });
-
-        return topLanguages;
+        Collections.sort(languages);
+        return languages;
     }
 }

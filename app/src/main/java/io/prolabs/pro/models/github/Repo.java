@@ -10,6 +10,13 @@ public class Repo {
     @SerializedName("language")
     private String language;
 
+    @SerializedName("name")
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
     public int getStars() {
         return stars;
     }
