@@ -88,9 +88,6 @@ public class LanguagesFragment extends Fragment {
             public void success(JsonElement jsonElement, Response response) {
                 languages.addAll(GitHubUtils.parseLanguageResponse(jsonElement));
                 gotARepo();
-
-                for (Language language : languages)
-                    Timber.i(language.getName() + " : " + language.getBytes());
             }
 
             @Override
