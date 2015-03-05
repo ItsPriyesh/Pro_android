@@ -25,4 +25,8 @@ public class Repo {
         return language;
     }
 
+    public int hashCode() {
+        return name.hashCode();
+    }
+
 }
