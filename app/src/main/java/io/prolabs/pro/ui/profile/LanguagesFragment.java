@@ -11,13 +11,13 @@ import android.widget.Toast;
 
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -76,6 +76,7 @@ public class LanguagesFragment extends Fragment {
 
     private void askForLanguages() {
         if (repos.isEmpty()) return;
+
         for (Repo repo : repos) {
             askForLanguage(repo);
         }
@@ -147,7 +148,9 @@ public class LanguagesFragment extends Fragment {
     }
 
     private void setupUI() {
-        // Fill it in, Pripri
+        Timber.i("SETUP UI CALLED");
+        languageListView.setAdapter(
+                new LanguageListAdapter(getActivity(), new ArrayList<>(languages)));
     }
 
     private void gotARepo() {
@@ -155,5 +158,4 @@ public class LanguagesFragment extends Fragment {
             setupUI();
         }
     }
-
 }
