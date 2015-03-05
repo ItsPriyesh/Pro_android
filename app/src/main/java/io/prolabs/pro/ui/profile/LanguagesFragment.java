@@ -100,7 +100,9 @@ public class LanguagesFragment extends Fragment {
                     if (retriesSoFar == MAX_RETRIES) {
                         Toast.makeText(getActivity(), "Repo " + repo.getName() + " not reachable!", Toast.LENGTH_SHORT)
                                 .show();
-                        failedRepos.incrementAndGet();
+                        if (queriedRepos.get() + failedRepos.incrementAndGet() >= repos.size()) {
+                            setupUI();
+                        }
                     } else {
                         retries.put(repo, retriesSoFar + 1);
                         askForLanguage(repo);
@@ -108,7 +110,9 @@ public class LanguagesFragment extends Fragment {
                     retries.put(repo, retries.get(repo) + 1);
                 } else {
                     Toast.makeText(getActivity(), getErrorMessage(error), Toast.LENGTH_SHORT).show();
-                    failedRepos.incrementAndGet();
+                    if (queriedRepos.get() + failedRepos.incrementAndGet() >= repos.size()) {
+                        setupUI();
+                    }
                 }
             }
         });
