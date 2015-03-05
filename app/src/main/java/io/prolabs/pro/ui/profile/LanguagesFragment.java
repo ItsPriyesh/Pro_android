@@ -10,7 +10,12 @@ import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -33,8 +38,8 @@ public class LanguagesFragment extends Fragment {
 
     private GitHubService gitHubService;
     private User user;
-    private List<Repo> repos;
-    private List<Language> languages;
+    private List<Repo> repos = new ArrayList<>();
+    private final Set<Language> languages = Collections.synchronizedSet(new TreeSet<>());
 
     public LanguagesFragment() {
         // Required empty public constructor
@@ -51,13 +56,12 @@ public class LanguagesFragment extends Fragment {
 
         gitHubService = GitHubApi.getService();
 
-        gitHubService.getLanguages(user.getUsername(), "Roomies", new Callback<JsonElement>() {
-            @Override
-            public void success(JsonElement jsonElement, Response response) {
-                languages = GitHubUtils.parseLanguageResponse(jsonElement);
+        gitHubService.getRepos(0, new Callback<List<Repo>>() {
 
-                for (Language language : languages)
-                    Timber.i(language.getName() + " : " + language.getBytes());
+            @Override
+            public void success(List<Repo> repositories, Response response) {
+                Collections.copy(repos, repositories);
+                askForLanguages();
             }
 
             @Override
@@ -71,6 +75,26 @@ public class LanguagesFragment extends Fragment {
 
     public void setRepos(List<Repo> repos) {
         this.repos = repos;
+    }
+
+    private void askForLanguages() {
+        if (repos.isEmpty()) return;
+        for (Repo r : repos) {
+            gitHubService.getLanguages(user.getUsername(), r.getName(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+                        languages.addAll(GitHubUtils.parseLanguageResponse(jsonElement));
+
+                        for (Language language : languages)
+                            Timber.i(language.getName() + " : " + language.getBytes());
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
+        }
     }
 
 }
