@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,6 @@ import io.prolabs.pro.utils.GitHubUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
 
@@ -73,9 +73,6 @@ public class LanguagesFragment extends Fragment {
                 public void success(JsonElement jsonElement, Response response) {
                     languages.addAll(GitHubUtils.parseLanguageResponse(jsonElement));
                     gotARepo();
-
-                    for (Language language : languages)
-                        Timber.i(language.getName() + " : " + language.getBytes());
                 }
 
                 @Override
@@ -87,7 +84,8 @@ public class LanguagesFragment extends Fragment {
     }
 
     private void setupUI() {
-        // Fill it in, Pripri
+        languageListView.setAdapter(
+                new LanguageListAdapter(getActivity(), new ArrayList<>(languages)));
     }
 
     private void gotARepo() {
@@ -95,5 +93,4 @@ public class LanguagesFragment extends Fragment {
             setupUI();
         }
     }
-
 }
