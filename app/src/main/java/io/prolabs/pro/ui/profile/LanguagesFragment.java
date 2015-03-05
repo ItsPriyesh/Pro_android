@@ -108,21 +108,22 @@ public class LanguagesFragment extends Fragment {
                     }
                     retries.put(repo, retries.get(repo) + 1);
                 } else {
-                    Toast.makeText(getActivity(), getErrorMessage(errorKind), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getErrorMessage(error), Toast.LENGTH_SHORT).show();
                     failedRepos.incrementAndGet();
                 }
             }
         });
     }
 
-    private String getErrorMessage(RetrofitError.Kind errorKind) {
+    private String getErrorMessage(RetrofitError error) {
+        RetrofitError.Kind errorKind = error.getKind();
         switch (errorKind) {
             case NETWORK:
                 return "Network error!";
             case CONVERSION:
                 return "Data read error!";
             case HTTP:
-                return "Authentication problem!";
+                return "HTTP problem: status " + error.getResponse().getStatus();
             default:
                 return "Something went wrong fetching your information!";
         }
