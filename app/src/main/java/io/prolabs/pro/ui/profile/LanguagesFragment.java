@@ -10,7 +10,6 @@ import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +36,7 @@ public class LanguagesFragment extends Fragment {
 
     private GitHubService gitHubService;
     private User user;
-    private List<Repo> repos = new ArrayList<>();
+    private List<Repo> repos;
     private final Set<Language> languages = Collections.synchronizedSet(new TreeSet<>());
 
     public LanguagesFragment() {
@@ -55,7 +54,6 @@ public class LanguagesFragment extends Fragment {
 
         gitHubService = GitHubApi.getService();
 
-        Collections.copy(repos, repositories);
         askForLanguages();
 
         return view;

@@ -108,13 +108,17 @@ public class ProfileActivity extends ActionBarActivity {
         });
     }
 
-    private void setupInterface() {
-        if (progressDialog.isShowing()) progressDialog.dismiss();
-
+    private void setupFragments() {
         infoFragment.setRepos(repos);
         infoFragment.setUser(user);
         languagesFragment.setUser(user);
         languagesFragment.setRepos(repos);
+    }
+
+    private void setupInterface() {
+        if (progressDialog.isShowing()) progressDialog.dismiss();
+
+        setupFragments();
 
         viewPager.setAdapter(new ProfilePagerAdapter(getSupportFragmentManager()));
         tabLayout.setViewPager(viewPager);
