@@ -8,16 +8,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.gson.JsonElement;
+
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
+import io.prolabs.pro.api.GitHubApi;
 import io.prolabs.pro.api.GitHubService;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
 import io.prolabs.pro.utils.GitHubUtils;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
 
@@ -42,27 +49,22 @@ public class LanguagesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_languages, container, false);
         ButterKnife.inject(this, view);
 
-        GitHubUtils.getLanguages(user.getUsername(), repos);
-
-       /* gitHubService = GitHubApi.getService();
+        gitHubService = GitHubApi.getService();
 
         gitHubService.getLanguages(user.getUsername(), "Roomies", new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
                 languages = GitHubUtils.parseLanguageResponse(jsonElement);
-                Collections.sort(languages);
-                for (Language language : languages) Timber.i(language.getName() + ":" + language.getBytes());
+
+                for (Language language : languages)
+                    Timber.i(language.getName() + " : " + language.getBytes());
             }
 
             @Override
             public void failure(RetrofitError error) {
 
             }
-        });*/
-
-      //  List<String> topLanguages = GitHubUtils.getTopLanguages(repos);
-        //languageListView.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, languages));
-
+        });
 
         return view;
     }

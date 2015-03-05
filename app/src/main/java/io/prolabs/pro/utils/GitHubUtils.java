@@ -10,14 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import io.prolabs.pro.api.GitHubApi;
-import io.prolabs.pro.api.GitHubService;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import timber.log.Timber;
 
 public class GitHubUtils {
 
@@ -27,22 +21,7 @@ public class GitHubUtils {
         return totalStars;
     }
 
-    public static List<Language> getLanguages(String username, List<Repo> repos) {
-        GitHubService gitHubService = GitHubApi.getService();
-
-        for (Repo repo : repos) {
-            gitHubService.getLanguages(username, repo.getName(), new Callback<JsonElement>() {
-                @Override
-                public void success(JsonElement jsonElement, Response response) {
-                    //languages = GitHubUtils.parseLanguageResponse(jsonElement);
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-
-                }
-            });
-        }
+    public static List<Language> parseLanguageResponse(JsonElement json) {
         Type type = new TypeToken<Map<String, Integer>>() {}.getType();
         Map<String, Integer> responseMap = new Gson().fromJson(json.toString(), type);
 
