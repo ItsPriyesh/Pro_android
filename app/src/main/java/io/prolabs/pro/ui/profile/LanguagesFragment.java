@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicLong;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,6 +39,7 @@ public class LanguagesFragment extends Fragment {
     private User user;
     private List<Repo> repos;
     private final Set<Language> languages = Collections.synchronizedSet(new TreeSet<>());
+    private final AtomicLong queriedRepos = new AtomicLong(0);
 
     public LanguagesFragment() {
         // Required empty public constructor
@@ -70,6 +72,7 @@ public class LanguagesFragment extends Fragment {
                 @Override
                 public void success(JsonElement jsonElement, Response response) {
                     languages.addAll(GitHubUtils.parseLanguageResponse(jsonElement));
+                    gotARepo();
 
                     for (Language language : languages)
                         Timber.i(language.getName() + " : " + language.getBytes());
@@ -80,6 +83,16 @@ public class LanguagesFragment extends Fragment {
 
                 }
             });
+        }
+    }
+
+    private void setupUI() {
+        // Fill it in, Pripri
+    }
+
+    private void gotARepo() {
+        if (queriedRepos.incrementAndGet() == repos.size()) {
+            setupUI();
         }
     }
 
