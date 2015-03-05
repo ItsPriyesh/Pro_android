@@ -10,7 +10,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
 
-public class BaseToolbarActivity extends ActionBarActivity {
+public class BaseToolBarActivity extends ActionBarActivity {
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;

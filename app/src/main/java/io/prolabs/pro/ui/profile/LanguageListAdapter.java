@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.ButterKnife;
 import io.prolabs.pro.R;
@@ -16,6 +18,7 @@ import io.prolabs.pro.models.github.Language;
 public class LanguageListAdapter extends ArrayAdapter<Language> {
     public LanguageListAdapter(Context context, ArrayList<Language> languages) {
         super(context, 0, languages);
+        Collections.sort(languages, (lhs, rhs) -> rhs.getBytes() - lhs.getBytes());
     }
 
     @Override
@@ -30,7 +33,7 @@ public class LanguageListAdapter extends ArrayAdapter<Language> {
         TextView bytes = ButterKnife.findById(convertView, R.id.bytes);
 
         name.setText(language.getName());
-        bytes.setText("" + language.getBytes());
+        bytes.setText(String.valueOf(language.getBytes()));
 
         return convertView;
     }

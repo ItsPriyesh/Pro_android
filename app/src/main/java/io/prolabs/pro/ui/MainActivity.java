@@ -13,13 +13,13 @@ import butterknife.OnClick;
 import io.prolabs.pro.ProApp;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.GitHubApi;
-import io.prolabs.pro.ui.common.BaseToolbarActivity;
+import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.login.LoginFragment;
 import io.prolabs.pro.ui.profile.ProfileActivity;
 import io.prolabs.pro.utils.NetworkUtils;
 import io.prolabs.pro.utils.ViewUtils;
 
-public class MainActivity extends BaseToolbarActivity {
+public class MainActivity extends BaseToolBarActivity {
 
     @InjectView(R.id.splashContainer)
     View splashContainer;
