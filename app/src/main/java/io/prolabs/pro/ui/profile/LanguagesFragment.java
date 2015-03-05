@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -56,19 +55,8 @@ public class LanguagesFragment extends Fragment {
 
         gitHubService = GitHubApi.getService();
 
-        gitHubService.getRepos(0, new Callback<List<Repo>>() {
-
-            @Override
-            public void success(List<Repo> repositories, Response response) {
-                Collections.copy(repos, repositories);
-                askForLanguages();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
+        Collections.copy(repos, repositories);
+        askForLanguages();
 
         return view;
     }
@@ -83,10 +71,10 @@ public class LanguagesFragment extends Fragment {
             gitHubService.getLanguages(user.getUsername(), r.getName(), new Callback<JsonElement>() {
                 @Override
                 public void success(JsonElement jsonElement, Response response) {
-                        languages.addAll(GitHubUtils.parseLanguageResponse(jsonElement));
+                    languages.addAll(GitHubUtils.parseLanguageResponse(jsonElement));
 
-                        for (Language language : languages)
-                            Timber.i(language.getName() + " : " + language.getBytes());
+                    for (Language language : languages)
+                        Timber.i(language.getName() + " : " + language.getBytes());
                 }
 
                 @Override

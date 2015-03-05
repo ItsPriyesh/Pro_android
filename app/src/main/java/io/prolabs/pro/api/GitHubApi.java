@@ -19,7 +19,7 @@ public class GitHubApi {
     private static final String ACCEPT_HEADER_VALUE = "application/vnd.github.v3+json";
     private static final String AUTH_HEADER_NAME = "Authorization";
 
-    public static final int MAX_PER_PAGE = 100;
+    public static final int MAX_REPOS_PER_PAGE = 100;
 
     public static GitHubService getService(String username, String password) {
         if (gitHubService == null) {
