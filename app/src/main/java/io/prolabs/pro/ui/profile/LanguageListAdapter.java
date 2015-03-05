@@ -30,7 +30,7 @@ public class LanguageListAdapter extends ArrayAdapter<Language> {
         TextView bytes = ButterKnife.findById(convertView, R.id.bytes);
 
         name.setText(language.getName());
-        bytes.setText(language.getBytes());
+        bytes.setText("" + language.getBytes());
 
         return convertView;
     }
