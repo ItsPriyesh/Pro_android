@@ -48,9 +48,9 @@ public class InfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         ButterKnife.inject(this, view);
 
-        publicReposText.setText("" + user.getPublicRepoCount());
-        privateReposText.setText("" + user.getPrivateReposCount());
-        totalStarsText.setText("" + GitHubUtils.getTotalStars(repos));
+        publicReposText.setText(String.valueOf(user.getPublicRepoCount()));
+        privateReposText.setText(String.valueOf(user.getPrivateReposCount()));
+        totalStarsText.setText(String.valueOf(GitHubUtils.getTotalStars(repos)));
 
         return view;
     }

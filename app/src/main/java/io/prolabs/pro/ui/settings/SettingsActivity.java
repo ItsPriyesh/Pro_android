@@ -11,6 +11,7 @@ public class SettingsActivity extends BaseToolBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         setToolbarTitle("Settings");
+        showToolbarBackButton();
 
         getFragmentManager().beginTransaction()
                 .add(R.id.container, new SettingsFragment())
