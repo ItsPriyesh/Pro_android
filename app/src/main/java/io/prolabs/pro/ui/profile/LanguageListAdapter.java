@@ -14,6 +14,7 @@ import java.util.Comparator;
 import butterknife.ButterKnife;
 import io.prolabs.pro.R;
 import io.prolabs.pro.models.github.Language;
+import timber.log.Timber;
 
 public class LanguageListAdapter extends ArrayAdapter<Language> {
     public LanguageListAdapter(Context context, ArrayList<Language> languages) {

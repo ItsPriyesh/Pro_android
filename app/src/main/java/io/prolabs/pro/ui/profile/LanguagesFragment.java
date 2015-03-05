@@ -112,7 +112,6 @@ public class LanguagesFragment extends Fragment {
             public void success(JsonElement jsonElement, Response response) {
                 addLanguages(GitHubUtils.parseLanguageResponse(jsonElement));
                 gotARepo();
-
                 for (Map.Entry language : languages.entrySet())
                     Timber.i("Language received: " + language.getKey() + " : " + language.getValue());
             }
