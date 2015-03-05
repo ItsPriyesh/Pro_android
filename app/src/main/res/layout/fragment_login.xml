@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="Login"
-                android:textColor="@color/accent"
+                android:textColor="@color/primary_accent"
                 android:id="@+id/loginButton" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>

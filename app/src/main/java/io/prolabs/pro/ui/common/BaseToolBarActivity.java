@@ -33,4 +33,8 @@ public class BaseToolBarActivity extends ActionBarActivity {
     protected void setToolbarTitle(String title) {
         toolbarTitle.setText(title);
     }
+
+    protected void disableToolbarElevation() {
+        toolbar.setElevation(0);
+    }
 }

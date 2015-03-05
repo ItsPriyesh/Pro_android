@@ -2,12 +2,14 @@ package io.prolabs.pro.ui.profile;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -22,12 +24,14 @@ import io.prolabs.pro.api.GitHubApi;
 import io.prolabs.pro.api.GitHubService;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.common.SlidingTabLayout;
+import io.prolabs.pro.ui.settings.SettingsActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProfileActivity extends ActionBarActivity {
+public class ProfileActivity extends BaseToolBarActivity {
 
     @InjectView(R.id.avatar)
     CircleImageView avatarImage;
@@ -56,6 +60,8 @@ public class ProfileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.inject(this);
+
+        disableToolbarElevation();
 
         infoFragment = new InfoFragment();
         languagesFragment = new LanguagesFragment();
@@ -171,5 +177,23 @@ public class ProfileActivity extends ActionBarActivity {
         public int getCount() {
             return 2;
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
