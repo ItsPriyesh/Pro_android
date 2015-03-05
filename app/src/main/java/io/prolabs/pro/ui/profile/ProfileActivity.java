@@ -93,10 +93,11 @@ public class ProfileActivity extends ActionBarActivity {
     }
 
     private void getAuthUserRepos() {
-        gitHubService.getRepos(GitHubApi.MAX_PER_PAGE, new Callback<List<Repo>>() {
+        gitHubService.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
                 setRepos(repos);
+                setupFragments();
                 setupInterface();
             }
 
@@ -117,8 +118,6 @@ public class ProfileActivity extends ActionBarActivity {
 
     private void setupInterface() {
         if (progressDialog.isShowing()) progressDialog.dismiss();
-
-        setupFragments();
 
         viewPager.setAdapter(new ProfilePagerAdapter(getSupportFragmentManager()));
         tabLayout.setViewPager(viewPager);
