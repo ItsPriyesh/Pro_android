@@ -1,4 +1,4 @@
-package io.prolabs.pro.api;
+package io.prolabs.pro.api.github;
 
 import android.util.Base64;
 

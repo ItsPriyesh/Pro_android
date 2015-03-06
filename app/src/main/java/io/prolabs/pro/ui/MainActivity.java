@@ -12,7 +12,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import io.prolabs.pro.ProApp;
 import io.prolabs.pro.R;
-import io.prolabs.pro.api.GitHubApi;
+import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.login.LoginFragment;
 import io.prolabs.pro.ui.profile.ProfileActivity;

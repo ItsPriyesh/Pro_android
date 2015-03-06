@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -18,10 +19,12 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
-import io.prolabs.pro.api.GitHubApi;
-import io.prolabs.pro.api.GitHubService;
+import io.prolabs.pro.api.github.GitHubApi;
+import io.prolabs.pro.api.github.GitHubService;
+import io.prolabs.pro.api.linkedin.LinkedInApi;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
@@ -179,6 +182,20 @@ public class ProfileActivity extends BaseToolBarActivity {
         }
     }
 
+    @OnClick(R.id.search_fab)
+    public void searchFabClicked() {
+        LinkedInApi.getService().getProfile(new Callback<io.prolabs.pro.models.linkedin.User>() {
+            @Override
+            public void success(io.prolabs.pro.models.linkedin.User user, Response response) {
+                Toast.makeText(getApplicationContext(), user.getFirstName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

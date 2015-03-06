@@ -8,7 +8,7 @@ import android.preference.PreferenceFragment;
 import android.support.v4.app.ActivityCompat;
 
 import io.prolabs.pro.R;
-import io.prolabs.pro.api.GitHubApi;
+import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.ui.MainActivity;
 
 public class SettingsFragment extends PreferenceFragment {

@@ -1,4 +1,4 @@
-package io.prolabs.pro.api;
+package io.prolabs.pro.api.github;
 
 import com.google.gson.JsonElement;
 
