@@ -30,7 +30,7 @@ public class MainActivity extends BaseToolBarActivity {
     @InjectView(R.id.loginPrompt)
     View loginPrompt;
 
-    private boolean authExists = false;
+    private boolean githubAuthExists = false;
 
     final Handler handler = new Handler();
     final Runnable authCheckComplete = () -> onAuthCheckComplete();
@@ -74,7 +74,8 @@ public class MainActivity extends BaseToolBarActivity {
         new Thread() {
             public void run() {
                 Hawk.init(getApplicationContext(), getString(R.string.prefs_password));
-                authExists = Hawk.contains(ProApp.AUTH_KEY);
+                githubAuthExists = Hawk.contains(ProApp.GITHUB_AUTH_KEY);
+
                 handler.post(authCheckComplete);
             }
         }.start();
@@ -84,8 +85,8 @@ public class MainActivity extends BaseToolBarActivity {
         splashContainer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.throw_up));
         ViewUtils.hide(splashContainer);
 
-        if (authExists) {
-            GitHubApi.getService(Hawk.get(ProApp.AUTH_KEY));
+        if (githubAuthExists) {
+            GitHubApi.getService(Hawk.get(ProApp.GITHUB_AUTH_KEY));
             startActivity(new Intent(this, ProfileActivity.class));
             finish();
         } else {

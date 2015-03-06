@@ -30,6 +30,14 @@
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity
+            android:name=".ui.evaluator.ManualActivity"
+            android:label="@string/title_activity_manual" >
+        </activity>
+        <activity
+            android:name=".ui.evaluator.LinkedInSearchActivity"
+            android:label="@string/title_activity_linked_in_search" >
+        </activity>
     </application>
 
 </manifest>

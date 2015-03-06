@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,11 +23,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.api.linkedin.LinkedInApi;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.common.SlidingTabLayout;
+import io.prolabs.pro.ui.evaluator.LinkedInSearchActivity;
+import io.prolabs.pro.ui.evaluator.ManualActivity;
 import io.prolabs.pro.ui.settings.SettingsActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -184,17 +184,24 @@ public class ProfileActivity extends BaseToolBarActivity {
 
     @OnClick(R.id.search_fab)
     public void searchFabClicked() {
-        LinkedInApi.getService().getProfile(new Callback<io.prolabs.pro.models.linkedin.User>() {
-            @Override
-            public void success(io.prolabs.pro.models.linkedin.User user, Response response) {
-                Toast.makeText(getApplicationContext(), user.getFirstName(), Toast.LENGTH_SHORT).show();
-            }
+        showJobSelector();
+    }
 
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
+    private void showJobSelector() {
+        final String[] options = {"Enter manually", "Search LinkedIn"};
+        new AlertDialog.Builder(this)
+                .setTitle("Job description")
+                .setItems(options, (dialog, index) -> {
+                    switch (index) {
+                        case 0:
+                            startActivity(new Intent(this, ManualActivity.class));
+                            break;
+                        case 1:
+                            startActivity(new Intent(this, LinkedInSearchActivity.class));
+                            break;
+                    }
+                })
+                .create().show();
     }
 
     @Override

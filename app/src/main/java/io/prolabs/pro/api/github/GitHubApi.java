@@ -69,10 +69,10 @@ public class GitHubApi {
     }
 
     public static void saveCurrentAuth() {
-        Hawk.put(ProApp.AUTH_KEY, AUTH_HEADER_VALUE);
+        Hawk.put(ProApp.GITHUB_AUTH_KEY, AUTH_HEADER_VALUE);
     }
 
     public static void clearCurrentAuth() {
-        Hawk.remove(ProApp.AUTH_KEY);
+        Hawk.remove(ProApp.GITHUB_AUTH_KEY);
     }
 }
