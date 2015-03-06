@@ -46,6 +46,13 @@
                     android:fontFamily="sans-serif-light" />
             </LinearLayout>
 
+            <View
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="0.25dp"
+                android:layout_height="match_parent"
+                android:background="@color/black_50_opacity" />
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -70,6 +77,13 @@
                     android:textSize="12dp"
                     android:fontFamily="sans-serif-light" />
             </LinearLayout>
+
+            <View
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="0.25dp"
+                android:layout_height="match_parent"
+                android:background="@color/black_50_opacity" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -98,5 +112,10 @@
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
+    <TextView
+        android:text="0"
+        android:id="@+id/annualContributions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

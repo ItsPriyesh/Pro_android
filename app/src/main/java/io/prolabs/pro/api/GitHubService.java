@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import java.util.List;
 
+import io.prolabs.pro.models.github.CommitActivity;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
 import retrofit.Callback;
@@ -21,4 +22,7 @@ public interface GitHubService {
 
     @GET("/repos/{user}/{repo}/languages")
     void getLanguages(@Path("user") String user, @Path("repo") String repo, Callback<JsonElement> callback);
+
+    @GET("/repos/{user}/{repo}/stats/commit_activity")
+    void getCommitActivity(@Path("user") String user, @Path("repo") String repo, Callback<CommitActivity> callback);
 }
