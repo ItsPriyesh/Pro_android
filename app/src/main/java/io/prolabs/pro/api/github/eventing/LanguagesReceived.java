@@ -4,22 +4,24 @@ import java.util.List;
 
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.GitHubUser;
+import io.prolabs.pro.models.github.Repo;
 
 /**
  * Created by Edmund on 2015-03-07.
  */
 public class LanguagesReceived {
+    private Repo repo;
     private List<Language> languages;
-    private GitHubUser user;
 
-    public LanguagesReceived(GitHubUser user, List<Language> languages) {
+    public LanguagesReceived(Repo repo, List<Language> languages) {
+        this.repo = repo;
         this.languages = languages;
-        this.user = user;
     }
 
-    public GitHubUser getUser() {
-        return user;
+    public Repo getRepo() {
+        return repo;
     }
+
 
     public List<Language> getLanguages() {
         return languages;

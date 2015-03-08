@@ -29,4 +29,11 @@ public class Repo {
         return name.hashCode();
     }
 
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (!(other instanceof Repo)) return false;
+        Repo otherRepo = (Repo)other;
+        return otherRepo.name.equals(this.name);
+    }
+
 }

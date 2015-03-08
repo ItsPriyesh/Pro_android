@@ -73,7 +73,7 @@ public class GitHubReceiver {
         });
     }
 
-    private void requestLanguageForRepo(Repo repo) {
+    private void requestLanguageForRepo(final Repo repo) {
         GitHubUser user = GitHubApi.getCurrentUser();
         if (user == null) {
             getUser();
@@ -83,7 +83,7 @@ public class GitHubReceiver {
             @Override
             public void success(JsonElement jsonElement, Response response) {
                 List<Language> languages = GitHubUtils.parseLanguageResponse(jsonElement);
-                RECEIVE.post(new LanguagesReceived(user, languages));
+                RECEIVE.post(new LanguagesReceived(repo, languages));
                 for (Language language : languages)
                     Timber.i("Language received: " + language.getName() + " : " + language.getBytes());
             }

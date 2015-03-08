@@ -35,11 +35,11 @@ public class LanguagesFragment extends Fragment {
     private final Object languageLock = new Object();
     @InjectView(R.id.languageList)
     ListView languageListView;
-    private Map<String, Long> displayedLanguages = new HashMap<>();
     private GitHubService gitHubService;
     private GitHubReceiver gitHubReceiver;
     private GitHubUser user;
     private List<Repo> repos;
+    private HashMap<Repo, List<Language>> languagesByRepo = new HashMap<>();
 
     public LanguagesFragment() {
         // Required empty public constructor
@@ -68,28 +68,26 @@ public class LanguagesFragment extends Fragment {
     }
 
     @Subscribe
-    public void resetData(ResetDataRequest request) {
+    public void receivedALanguage(LanguagesReceived received) {
+        languagesByRepo.put(received.getRepo(), received.getLanguages());
         synchronized (languageLock) {
-            displayedLanguages = new HashMap<>();
+            updateUI();
         }
     }
 
-    @Subscribe
-    public void receivedALanguage(LanguagesReceived received) {
-        updateUI(received.getUser(), received.getLanguages());
-    }
-
-    private void updateUI(GitHubUser user, List<Language> langs) {
-        for (Language lang : langs) {
-            String name = lang.getName();
-            long bytes = lang.getBytes();
-            synchronized (languageLock) {
+    private void updateUI() {
+        Map<String, Long> displayedLanguages = new HashMap<>();
+        for (List<Language> langs : languagesByRepo.values()) {
+            for (Language lang : langs) {
+                String name = lang.getName();
+                long bytes = lang.getBytes();
                 Timber.i("Adding language: " + lang.getName());
                 long bytesToAdd = bytes;
                 if (displayedLanguages.containsKey(name)) {
                     bytesToAdd += displayedLanguages.get(name);
                 }
                 displayedLanguages.put(name, bytesToAdd);
+
             }
         }
         languageListView.setAdapter(
