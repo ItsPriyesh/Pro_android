@@ -1,24 +1,18 @@
 package io.prolabs.pro.api.github.eventing;
 
-import android.widget.Toast;
-
 import com.google.gson.JsonElement;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.utils.GitHubUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -58,7 +52,7 @@ public class GitHubReceiver {
 
     @Subscribe
     public void requestLanguageForRepo(LanguageDataRequest request) {
-        User user = request.getUser();
+        GitHubUser user = request.getUser();
         Repo repo = request.getRepo();
         service.getLanguages(user.getUsername(), repo.getName(), new Callback<JsonElement>() {
             @Override
@@ -95,7 +89,7 @@ public class GitHubReceiver {
                 error.getResponse().getStatus() == 404;
     }
 
-    private void recoverFromRepoError(User user, Repo repo, RetrofitError error) {
+    private void recoverFromRepoError(GitHubUser user, Repo repo, RetrofitError error) {
         RetrofitError.Kind errorKind = error.getKind();
         if (!is404(error)) {
             if (isRetryable(errorKind)) {
@@ -106,7 +100,7 @@ public class GitHubReceiver {
         }
     }
 
-    private void tryToRetry(User user, Repo repo) {
+    private void tryToRetry(GitHubUser user, Repo repo) {
         Integer unsafeRetriesSoFar = retries.get(repo);
         int retriesSoFar = (unsafeRetriesSoFar == null) ? 0 : unsafeRetriesSoFar;
         if (retriesSoFar != MAX_RETRIES) {

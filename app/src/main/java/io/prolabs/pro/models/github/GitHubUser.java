@@ -2,7 +2,7 @@ package io.prolabs.pro.models.github;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class GitHubUser {
 
     @SerializedName("public_repos")
     private int publicReposCount;

@@ -24,7 +24,7 @@ import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.common.SlidingTabLayout;
 import io.prolabs.pro.ui.evaluator.LinkedInSearchActivity;
@@ -52,7 +52,7 @@ public class ProfileActivity extends BaseToolBarActivity {
     ViewPager viewPager;
 
     private GitHubService gitHubService;
-    private User user;
+    private GitHubUser gitHubUser;
     private List<Repo> repos;
     private InfoFragment infoFragment;
     private LanguagesFragment languagesFragment;
@@ -86,10 +86,10 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void getAuthUser() {
-        gitHubService.getAuthUser(new Callback<User>() {
+        gitHubService.getAuthUser(new Callback<GitHubUser>() {
             @Override
-            public void success(User user, Response response) {
-                setUser(user);
+            public void success(GitHubUser gitHubUser, Response response) {
+                setUser(gitHubUser);
                 getAuthUserRepos();
             }
 
@@ -120,8 +120,8 @@ public class ProfileActivity extends BaseToolBarActivity {
 
     private void setupFragments() {
         infoFragment.setRepos(repos);
-        infoFragment.setUser(user);
-        languagesFragment.setUser(user);
+        infoFragment.setUser(gitHubUser);
+        languagesFragment.setUser(gitHubUser);
         languagesFragment.setRepos(repos);
     }
 
@@ -131,9 +131,9 @@ public class ProfileActivity extends BaseToolBarActivity {
         viewPager.setAdapter(new ProfilePagerAdapter(getSupportFragmentManager()));
         tabLayout.setViewPager(viewPager);
 
-        Picasso.with(this).load(user.getAvatarUrl()).into(avatarImage);
-        usernameText.setText(user.getUsername());
-        nameText.setText(user.getName());
+        Picasso.with(this).load(gitHubUser.getAvatarUrl()).into(avatarImage);
+        usernameText.setText(gitHubUser.getUsername());
+        nameText.setText(gitHubUser.getName());
     }
 
     private void handleApiCallError() {
@@ -144,8 +144,8 @@ public class ProfileActivity extends BaseToolBarActivity {
                 .create().show();
     }
 
-    private void setUser(User user) {
-        this.user = user;
+    private void setUser(GitHubUser gitHubUser) {
+        this.gitHubUser = gitHubUser;
     }
 
     private void setRepos(List<Repo> repos) {

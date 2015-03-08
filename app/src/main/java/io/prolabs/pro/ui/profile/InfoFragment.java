@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.utils.GitHubUtils;
 
 public class InfoFragment extends Fragment {
@@ -28,15 +28,15 @@ public class InfoFragment extends Fragment {
     @InjectView(R.id.totalStarsCount)
     TextView totalStarsText;
 
-    private User user;
+    private GitHubUser gitHubUser;
     private List<Repo> repos;
 
     public InfoFragment() {
         // Required empty public constructor
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(GitHubUser gitHubUser) {
+        this.gitHubUser = gitHubUser;
     }
 
     public void setRepos(List<Repo> repos) {
@@ -48,8 +48,8 @@ public class InfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         ButterKnife.inject(this, view);
 
-        publicReposText.setText(String.valueOf(user.getPublicRepoCount()));
-        privateReposText.setText(String.valueOf(user.getPrivateReposCount()));
+        publicReposText.setText(String.valueOf(gitHubUser.getPublicRepoCount()));
+        privateReposText.setText(String.valueOf(gitHubUser.getPrivateReposCount()));
         totalStarsText.setText(String.valueOf(GitHubUtils.getTotalStars(repos)));
 
         return view;

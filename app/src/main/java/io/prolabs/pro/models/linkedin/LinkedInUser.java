@@ -2,7 +2,7 @@ package io.prolabs.pro.models.linkedin;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class LinkedInUser {
     @SerializedName("firstName")
     private String firstName;
 

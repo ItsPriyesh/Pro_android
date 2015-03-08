@@ -16,7 +16,7 @@ import butterknife.OnClick;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.ui.profile.ProfileActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -57,9 +57,9 @@ public class LoginFragment extends Fragment {
 
     private void loginGitHub(String username, String password) {
         gitHubService = GitHubApi.getService(username, password);
-        gitHubService.getAuthUser(new Callback<User>() {
+        gitHubService.getAuthUser(new Callback<GitHubUser>() {
             @Override
-            public void success(User user, Response response) {
+            public void success(GitHubUser user, Response response) {
                 GitHubApi.saveCurrentAuth();
                 startActivity(new Intent(getActivity(), ProfileActivity.class));
                 getActivity().finish();

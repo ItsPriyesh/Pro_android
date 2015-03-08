@@ -5,8 +5,9 @@ import com.google.gson.JsonElement;
 import java.util.List;
 
 import io.prolabs.pro.models.github.CommitActivity;
+import io.prolabs.pro.models.github.Gist;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.GitHubUser;
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
@@ -15,7 +16,7 @@ import retrofit.http.Query;
 public interface GitHubService {
 
     @GET("/user")
-    void getAuthUser(Callback<User> callback);
+    void getAuthUser(Callback<GitHubUser> callback);
 
     @GET("/user/repos")
     void getRepos(@Query("per_page") int reposPerPage, Callback<List<Repo>> callback);
@@ -28,5 +29,9 @@ public interface GitHubService {
 
     @GET("/repos/{user}/{repo}/stats/code_frequency")
     void getCodeFrequency(@Path("user") String user, @Path("repo") String repo, Callback<JsonElement> callback);
+
+    // Doesn't take a user; assumes the authenticated user.
+    @GET("/gists/public")
+    void getGists(Callback<List<Gist>> callback);
 
 }

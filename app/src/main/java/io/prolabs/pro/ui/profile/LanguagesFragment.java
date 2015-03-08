@@ -25,7 +25,7 @@ import io.prolabs.pro.api.github.eventing.LanguageDataRequest;
 import io.prolabs.pro.api.github.eventing.LanguagesReceived;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.User;
+import io.prolabs.pro.models.github.GitHubUser;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
@@ -37,14 +37,14 @@ public class LanguagesFragment extends Fragment {
     ListView languageListView;
     private GitHubService gitHubService;
     private GitHubReceiver gitHubReceiver;
-    private User user;
+    private GitHubUser user;
     private List<Repo> repos;
 
     public LanguagesFragment() {
         // Required empty public constructor
     }
 
-    public void setUser(User user) {
+    public void setUser(GitHubUser user) {
         this.user = user;
     }
 
@@ -78,7 +78,7 @@ public class LanguagesFragment extends Fragment {
         updateUI(received.getUser(), received.getLanguages());
     }
 
-    private void updateUI(User user, List<Language> langs) {
+    private void updateUI(GitHubUser user, List<Language> langs) {
         for (Language lang : langs) {
             String name = lang.getName();
             int bytes = lang.getBytes();
