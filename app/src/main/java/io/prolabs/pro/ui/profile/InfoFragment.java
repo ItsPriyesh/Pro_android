@@ -3,6 +3,7 @@ package io.prolabs.pro.ui.profile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +26,17 @@ import io.prolabs.pro.eventing.GitHubDataAggregator;
 import io.prolabs.pro.eventing.GitHubReceiver;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
+import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.utils.GitHubUtils;
+import io.prolabs.pro.utils.ViewUtils;
 
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment{
+
+    @InjectView(R.id.xpCardView)
+    CardView xpCard;
+
+    @InjectView(R.id.generalInfoCard)
+    CardView generalInfoCard;
 
     public static final int XP_SIG_FIGS = 3;
     @InjectView(R.id.publicReposCount)
@@ -96,5 +105,13 @@ public class InfoFragment extends Fragment {
         UserXp xp = xpCalculator.calculateXp(stats);
         long rounded = roundToSignificantFigures(xp.getTotalXp(), XP_SIG_FIGS);
         xpTextView.setText(String.valueOf(rounded));
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ViewUtils.animateTurnUp(generalInfoCard, getActivity());
+        ViewUtils.animateSlideInTop(xpCard, getActivity());
     }
 }

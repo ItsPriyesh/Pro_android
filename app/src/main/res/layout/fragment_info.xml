@@ -6,9 +6,13 @@
     tools:context="io.prolabs.pro.ui.profile.InfoFragment">
 
     <android.support.v7.widget.CardView
-        android:layout_margin="16dp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:id="@+id/xpCardView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
@@ -16,21 +20,44 @@
         card_view:cardCornerRadius="4dp">
 
         <LinearLayout
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_width="match_parent"
+            android:paddingTop="8dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <TextView
+                android:text="2223"
+                android:fontFamily="sans-serif-thin"
                 android:id="@+id/xpValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"/>
+
+            <View
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/black_20_opacity" />
+
+            <TextView
+                android:layout_marginBottom="2dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textAllCaps="true"
+                android:textSize="10dp"
+                android:text="Experience Points"/>
+
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/generalInfoCard"
+        android:visibility="gone"
         android:layout_below="@id/xpCardView"
         android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
