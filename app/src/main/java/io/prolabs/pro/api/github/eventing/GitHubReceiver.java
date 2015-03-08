@@ -5,14 +5,13 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.models.github.Gist;
+import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.utils.GitHubUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
