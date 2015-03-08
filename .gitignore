@@ -4,5 +4,3 @@
 /.idea/libraries
 .DS_Store
 /build
-
-app/src/main/java/io/prolabs/pro/SecretStuff.java
