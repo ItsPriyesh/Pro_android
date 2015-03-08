@@ -23,7 +23,7 @@ public class SimpleXpCalculator implements XpCalculator {
         Map<Repo, List<Language>> languagesByRepo = stats.getLanguagesByRepo();
         Map<Repo, List<CodeWeek>> codeWeeks = stats.getWeeksOfCodeByRepo();
         List<Repo> repos = stats.getRepos();
-        long totalXp = 0;
+        double totalXp = 0;
         Date now = new Date();
 
         for (List<CodeWeek> weeks : codeWeeks.values()) {
@@ -31,8 +31,7 @@ public class SimpleXpCalculator implements XpCalculator {
                 Date date = week.getWeekStart();
                 long added = week.getAddedLines();
                 long deleted = week.getDeletedLines();
-                long timeDiff = now.getTime() - date.getTime();
-                long dayDiff = TimeUnit.MILLISECONDS.toDays(timeDiff);
+                long dayDiff = TimeUnit.MILLISECONDS.toDays(now.getTime() - date.getTime());
                 totalXp += (long) ((added + deleted) * Math.exp(dayDiff - maxDays));
             }
         }
