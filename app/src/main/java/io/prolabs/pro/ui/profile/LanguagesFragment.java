@@ -31,15 +31,14 @@ import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
 
+    private final TreeMap<String, Integer> displayedLanguages = new TreeMap<>();
+    private final Object languageLock = new Object();
     @InjectView(R.id.languageList)
     ListView languageListView;
-
     private GitHubService gitHubService;
     private GitHubReceiver gitHubReceiver;
     private User user;
     private List<Repo> repos;
-    private final TreeMap<String, Integer> displayedLanguages = new TreeMap<>();
-    private final Object languageLock = new Object();
 
     public LanguagesFragment() {
         // Required empty public constructor

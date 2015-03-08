@@ -35,7 +35,7 @@ public class BaseToolBarActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             this.finish();
             return true;
         }

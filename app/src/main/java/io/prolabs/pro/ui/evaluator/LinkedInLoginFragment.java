@@ -18,10 +18,6 @@ import io.prolabs.pro.R;
 
 public class LinkedInLoginFragment extends DialogFragment {
 
-    public interface LinkedInDialogListener {
-        public void onDoneButtonClicked(String verificationKey);
-    }
-
     LinkedInDialogListener listener;
 
     @Override
@@ -55,12 +51,15 @@ public class LinkedInLoginFragment extends DialogFragment {
             if (!verificationKey.equals("")) {
                 listener.onDoneButtonClicked(verifierInput.getText().toString());
                 dismiss();
-            }
-            else
+            } else
                 Toast.makeText(getActivity(),
                         "Please enter the verification key.", Toast.LENGTH_SHORT).show();
         });
 
         return view;
+    }
+
+    public interface LinkedInDialogListener {
+        public void onDoneButtonClicked(String verificationKey);
     }
 }

@@ -25,7 +25,8 @@ public class GitHubUtils {
     }
 
     public static List<Language> parseLanguageResponse(JsonElement json) {
-        Type type = new TypeToken<Map<String, Integer>>() {}.getType();
+        Type type = new TypeToken<Map<String, Integer>>() {
+        }.getType();
         Map<String, Integer> responseMap = new Gson().fromJson(json.toString(), type);
 
         List<Language> languages = new ArrayList<>();

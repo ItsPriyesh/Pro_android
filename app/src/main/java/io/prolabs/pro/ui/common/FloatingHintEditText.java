@@ -14,17 +14,13 @@ import android.widget.EditText;
 import io.prolabs.pro.R;
 
 public class FloatingHintEditText extends EditText {
-    private static enum Animation { NONE, SHRINK, GROW }
-
     private final Paint mFloatingHintPaint = new Paint();
     private final ColorStateList mHintColors;
     private final float mHintScale;
     private final int mAnimationSteps;
-
     private boolean mWasEmpty;
     private int mAnimationFrame;
     private Animation mAnimation = Animation.NONE;
-
     public FloatingHintEditText(Context context) {
         this(context, null);
     }
@@ -143,4 +139,6 @@ public class FloatingHintEditText extends EditText {
         final float alpha = (float) mAnimationFrame / (mAnimationSteps - 1);
         return from * (1 - alpha) + to * alpha;
     }
+
+    private static enum Animation {NONE, SHRINK, GROW}
 }

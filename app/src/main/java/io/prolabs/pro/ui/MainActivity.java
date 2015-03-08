@@ -21,19 +21,15 @@ import io.prolabs.pro.utils.ViewUtils;
 
 public class MainActivity extends BaseToolBarActivity {
 
-    @InjectView(R.id.splashContainer)
-    View splashContainer;
-
-    @InjectView(R.id.networkErrorContainer)
-    View networkErrorContainer;
-
-    @InjectView(R.id.loginPrompt)
-    View loginPrompt;
-
-    private boolean githubAuthExists = false;
-
     final Handler handler = new Handler();
     final Runnable authCheckComplete = () -> onAuthCheckComplete();
+    @InjectView(R.id.splashContainer)
+    View splashContainer;
+    @InjectView(R.id.networkErrorContainer)
+    View networkErrorContainer;
+    @InjectView(R.id.loginPrompt)
+    View loginPrompt;
+    private boolean githubAuthExists = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

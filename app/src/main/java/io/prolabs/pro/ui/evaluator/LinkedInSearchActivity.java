@@ -22,13 +22,16 @@ import io.prolabs.pro.ui.common.BaseToolBarActivity;
 public class LinkedInSearchActivity extends BaseToolBarActivity
         implements LinkedInLoginFragment.LinkedInDialogListener {
 
+    public static final String AUTH_URL = "AUTH_URL";
+    final Handler handler = new Handler();
+    final Runnable authCheckComplete = () -> onAuthCheckComplete();
+    final Runnable receivedRequestToken = () -> onRequestTokenReceived();
+    final Runnable receivedAccessToken = () -> onAccessTokenReceived();
     private Token linkedInRequestToken;
     private Token linkedInAccessToken;
     private OAuthService linkedInService;
     private ProgressDialog progressDialog;
     private boolean linkedinAuthExists = false;
-
-    public static final String AUTH_URL = "AUTH_URL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +47,6 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
         checkAuthExists();
 
     }
-
-    final Handler handler = new Handler();
-    final Runnable authCheckComplete = () -> onAuthCheckComplete();
-    final Runnable receivedRequestToken = () -> onRequestTokenReceived();
-    final Runnable receivedAccessToken =() -> onAccessTokenReceived();
 
     private void checkAuthExists() {
         new Thread() {
@@ -102,7 +100,6 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
             }
         }.start();
     }
-
 
 
     private void onAccessTokenReceived() {

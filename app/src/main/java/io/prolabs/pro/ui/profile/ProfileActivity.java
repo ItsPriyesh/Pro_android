@@ -152,36 +152,6 @@ public class ProfileActivity extends BaseToolBarActivity {
         this.repos = repos;
     }
 
-    private class ProfilePagerAdapter extends FragmentPagerAdapter {
-        public String[] tabTitles = {"Profile", "Languages"};
-
-        public ProfilePagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return infoFragment;
-                case 1:
-                    return languagesFragment;
-                default:
-                    return infoFragment;
-            }
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-    }
-
     @OnClick(R.id.search_fab)
     public void searchFabClicked() {
         showJobSelector();
@@ -219,5 +189,35 @@ public class ProfileActivity extends BaseToolBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class ProfilePagerAdapter extends FragmentPagerAdapter {
+        public String[] tabTitles = {"Profile", "Languages"};
+
+        public ProfilePagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return infoFragment;
+                case 1:
+                    return languagesFragment;
+                default:
+                    return infoFragment;
+            }
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 }

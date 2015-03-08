@@ -10,6 +10,12 @@ public class CodeWeek {
     private long addedLines;
     private long deletedLines;
 
+    public CodeWeek(Date weekStart, long addedLines, long deletedLines) {
+        this.weekStart = weekStart;
+        this.addedLines = addedLines;
+        this.deletedLines = deletedLines;
+    }
+
     public long getAddedLines() {
         return addedLines;
     }
@@ -20,11 +26,5 @@ public class CodeWeek {
 
     public long getDeletedLines() {
         return deletedLines;
-    }
-
-    public CodeWeek(Date weekStart, long addedLines, long deletedLines) {
-        this.weekStart = weekStart;
-        this.addedLines = addedLines;
-        this.deletedLines = deletedLines;
     }
 }

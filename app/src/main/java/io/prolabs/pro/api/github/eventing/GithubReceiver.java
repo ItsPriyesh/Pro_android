@@ -29,8 +29,16 @@ import timber.log.Timber;
  * Created by Edmund on 2015-03-07.
  */
 public class GitHubReceiver {
+    private static final int MAX_RETRIES = 5;
     private static GitHubReceiver instance = null;
     private static GitHubService service = GitHubApi.getService();
+    private final Bus RECEIVE = new Bus(ThreadEnforcer.MAIN);
+    private final Bus SEND = new Bus(ThreadEnforcer.ANY);
+    private ConcurrentHashMap<Repo, Integer> retries = new ConcurrentHashMap<>();
+
+    private GitHubReceiver() {
+        SEND.register(this);
+    }
 
     public static GitHubReceiver getInstance() {
         if (instance == null) {
@@ -46,15 +54,6 @@ public class GitHubReceiver {
 
     public void ask(Object obj) {
         SEND.post(obj);
-    }
-
-    private ConcurrentHashMap<Repo, Integer> retries = new ConcurrentHashMap<>();
-
-    private final Bus RECEIVE = new Bus(ThreadEnforcer.MAIN);
-    private final Bus SEND = new Bus(ThreadEnforcer.ANY);
-
-    private GitHubReceiver() {
-        SEND.register(this);
     }
 
     @Subscribe
@@ -106,8 +105,6 @@ public class GitHubReceiver {
             }
         }
     }
-
-    private static final int MAX_RETRIES = 5;
 
     private void tryToRetry(User user, Repo repo) {
         Integer unsafeRetriesSoFar = retries.get(repo);
