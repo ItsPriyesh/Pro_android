@@ -7,29 +7,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.google.gson.JsonElement;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
+import io.prolabs.pro.api.github.eventing.GitHubReceiver;
+import io.prolabs.pro.api.github.eventing.LanguageDataRequest;
+import io.prolabs.pro.api.github.eventing.LanguagesReceived;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.User;
-import io.prolabs.pro.utils.GitHubUtils;
-import retrofit.Callback;
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
@@ -38,14 +35,11 @@ public class LanguagesFragment extends Fragment {
     ListView languageListView;
 
     private GitHubService gitHubService;
+    private GitHubReceiver gitHubReceiver;
     private User user;
     private List<Repo> repos;
-    private HashMap<Repo, Integer> retries = new HashMap<>();
-    private final TreeMap<String, Integer> languages = new TreeMap<>();
+    private final TreeMap<String, Integer> displayedLanguages = new TreeMap<>();
     private final Object languageLock = new Object();
-    private final AtomicInteger queriedRepos = new AtomicInteger(0);
-    private final AtomicInteger failedRepos = new AtomicInteger(0);
-    private static final int MAX_RETRIES = 5;
 
     public LanguagesFragment() {
         // Required empty public constructor
@@ -61,6 +55,8 @@ public class LanguagesFragment extends Fragment {
         ButterKnife.inject(this, view);
 
         gitHubService = GitHubApi.getService();
+        gitHubReceiver = GitHubReceiver.getInstance();
+        gitHubReceiver.register(this);
 
         askForLanguages();
 
@@ -69,94 +65,40 @@ public class LanguagesFragment extends Fragment {
 
     public void setRepos(List<Repo> repos) {
         this.repos = repos;
-        for (Repo repo : repos) {
-            retries.put(repo, 0);
-        }
-    }
-
-    private void addLanguages(List<Language> langs) {
-        for (Language lang : langs) {
-            addLanguage(lang);
-        }
-    }
-
-    private void addLanguage(Language lang) {
-        String name = lang.getName();
-        int bytes = lang.getBytes();
-        synchronized (languageLock) {
-            Timber.i("Adding language: " + lang.getName());
-            int bytesToAdd = bytes;
-            Integer bytesAlreadyPresent = languages.get(name);
-            if (bytesAlreadyPresent != null) {
-                bytesToAdd += bytesAlreadyPresent;
-            }
-            languages.put(name, bytesToAdd);
-        }
     }
 
     private void askForLanguages() {
-        if (repos.isEmpty()) return;
-
-        for (Repo repo : repos) {
-            Timber.i("Repo found: " + repo.getName());
-            askForLanguage(repo);
+        for (Repo repo : this.repos) {
+            LanguageDataRequest request = new LanguageDataRequest(user, repo);
+            gitHubReceiver.ask(request);
         }
     }
 
-    private void askForLanguage(final Repo repo) {
-        gitHubService.getLanguages(user.getUsername(), repo.getName(), new Callback<JsonElement>() {
-            @Override
-            public void success(JsonElement jsonElement, Response response) {
-                addLanguages(GitHubUtils.parseLanguageResponse(jsonElement));
-                gotARepo();
-                for (Map.Entry language : languages.entrySet())
-                    Timber.i("Language received: " + language.getKey() + " : " + language.getValue());
+    @Subscribe
+    public void receivedALanguage(LanguagesReceived received) {
+        updateUI(received.getUser(), received.getLanguages());
+    }
+
+    private void updateUI(User user, List<Language> langs) {
+        for (Language lang : langs) {
+            String name = lang.getName();
+            int bytes = lang.getBytes();
+            synchronized (languageLock) {
+                Timber.i("Adding language: " + lang.getName());
+                int bytesToAdd = bytes;
+                Integer bytesAlreadyPresent = displayedLanguages.get(name);
+                if (bytesAlreadyPresent != null) {
+                    bytesToAdd += bytesAlreadyPresent;
+                }
+                displayedLanguages.put(name, bytesToAdd);
             }
-
-            @Override
-            public void failure(RetrofitError error) {
-                recoverFromRepoError(error, repo);
-            }
-        });
-    }
-
-    private boolean is404(RetrofitError error) {
-        return error.getKind() == RetrofitError.Kind.HTTP &&
-                error.getResponse().getStatus() == 404;
-    }
-
-    private void recoverFromRepoError(RetrofitError error, Repo repo) {
-        RetrofitError.Kind errorKind = error.getKind();
-        if (!is404(error)) {
-            if (isRetryable(errorKind)) {
-                tryToRetry(repo);
-            } else {
-                Timber.i("Failed to get repo: " + repo.getName());
-                Toast.makeText(getActivity(), getErrorMessage(error), Toast.LENGTH_SHORT).show();
-                failRepo();
-            }
-        } else {
-            failRepo();
         }
-    }
-
-    private void tryToRetry(Repo repo) {
-        int retriesSoFar = retries.get(repo);
-        if (retriesSoFar == MAX_RETRIES) {
-            Toast.makeText(getActivity(), "Repo " + repo.getName() + " not reachable!", Toast.LENGTH_SHORT)
-                    .show();
-            failRepo();
-        } else {
-            retries.put(repo, retriesSoFar + 1);
-            askForLanguage(repo);
+        ArrayList<Language> languageArrayList = new ArrayList<>();
+        for (Map.Entry<String, Integer> language : displayedLanguages.entrySet()) {
+            languageArrayList.add(new Language(language.getKey(), language.getValue()));
         }
-        retries.put(repo, retriesSoFar + 1);
-    }
-
-    private void failRepo() {
-        if (queriedRepos.get() + failedRepos.incrementAndGet() >= repos.size()) {
-            setupUI();
-        }
+        languageListView.setAdapter(
+                new LanguageListAdapter(getActivity(), languageArrayList));
     }
 
     private String getErrorMessage(RetrofitError error) {
@@ -170,38 +112,6 @@ public class LanguagesFragment extends Fragment {
                 return "HTTP problem: status " + error.getResponse().getStatus();
             default:
                 return "Something went wrong fetching your information!";
-        }
-    }
-
-    private boolean isRetryable(RetrofitError.Kind errorKind) {
-        boolean retryable = false;
-        switch (errorKind) {
-            case NETWORK:
-            case CONVERSION:
-                retryable = true;
-            case HTTP:
-            case UNEXPECTED:
-            default:
-                retryable = false;
-        }
-        return retryable;
-    }
-
-    private void setupUI() {
-        Timber.i("SETUP UI CALLED");
-        ArrayList<Language> languageArrayList = new ArrayList<>();
-        for (Map.Entry<String, Integer> language : languages.entrySet()) {
-            languageArrayList.add(new Language(language.getKey(), language.getValue()));
-        }
-        Timber.i("Setting up language list...");
-
-        languageListView.setAdapter(
-                new LanguageListAdapter(getActivity(), languageArrayList));
-    }
-
-    private void gotARepo() {
-        if (queriedRepos.incrementAndGet() + failedRepos.get() >= repos.size()) {
-            setupUI();
         }
     }
 }
