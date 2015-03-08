@@ -1,14 +1,15 @@
 package io.prolabs.pro.ui.evaluator;
 
 import android.app.ProgressDialog;
-import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 
 import com.orhanobut.hawk.Hawk;
 
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.LinkedInApi;
+import org.scribe.exceptions.OAuthException;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
@@ -47,6 +48,7 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
     final Handler handler = new Handler();
     final Runnable authCheckComplete = () -> onAuthCheckComplete();
     final Runnable receivedRequestToken = () -> onRequestTokenReceived();
+    final Runnable receivedAccessToken =() -> onAccessTokenReceived();
 
     private void checkAuthExists() {
         new Thread() {
@@ -61,13 +63,13 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
 
     private void onAuthCheckComplete() {
         if (linkedinAuthExists) {
-
+            linkedInAccessToken = Hawk.get(ProApp.LINKEDIN_AUTH_KEY);
         } else {
-            startOAuth();
+            getRequestToken();
         }
     }
 
-    private void startOAuth() {
+    private void getRequestToken() {
         new Thread() {
             public void run() {
                 linkedInService = new ServiceBuilder()
@@ -87,6 +89,26 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
         showLoginDialog();
     }
 
+    private void getAccessToken(String verificationKey) {
+        new Thread() {
+            public void run() {
+                try {
+                    linkedInAccessToken = linkedInService.getAccessToken(
+                            linkedInRequestToken, new Verifier(verificationKey));
+                } catch (OAuthException e) {
+
+                }
+                handler.post(receivedAccessToken);
+            }
+        }.start();
+    }
+
+
+
+    private void onAccessTokenReceived() {
+        Hawk.put(ProApp.GITHUB_AUTH_KEY, linkedInAccessToken);
+    }
+
     public void showLoginDialog() {
         if (progressDialog.isShowing()) progressDialog.dismiss();
 
@@ -100,7 +122,6 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
 
     @Override
     public void onDoneButtonClicked(String verificationKey) {
-        linkedInAccessToken =
-                linkedInService.getAccessToken(linkedInRequestToken, new Verifier(verificationKey));
+        getAccessToken(verificationKey);
     }
 }
