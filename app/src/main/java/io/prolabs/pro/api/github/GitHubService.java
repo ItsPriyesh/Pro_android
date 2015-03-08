@@ -25,4 +25,8 @@ public interface GitHubService {
 
     @GET("/repos/{user}/{repo}/stats/commit_activity")
     void getCommitActivity(@Path("user") String user, @Path("repo") String repo, Callback<CommitActivity> callback);
+
+    @GET("/repos/{user}/{repo}/stats/code_frequency")
+    void getCodeFrequency(@Path("user") String user, @Path("repo") String repo, Callback<JsonElement> callback);
+
 }
