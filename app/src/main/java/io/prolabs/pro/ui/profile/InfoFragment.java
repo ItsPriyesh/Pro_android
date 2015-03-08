@@ -18,6 +18,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
+import io.prolabs.pro.Tips;
 import io.prolabs.pro.algo.FullUserStats;
 import io.prolabs.pro.algo.UserXp;
 import io.prolabs.pro.algo.XpCalculator;
@@ -121,14 +122,14 @@ public class InfoFragment extends Fragment {
     private CardView createTipCard() {
         CardView cardView = new CardView(getActivity());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         int margin = ViewUtils.dpToPx(16, getActivity());
 
         cardView.setLayoutParams(lp);
         cardView.setClickable(true);
         cardView.setPadding(margin, margin, margin, margin);
         TextView tipText = new TextView(getActivity());
-        tipText.setText("Test");
+        tipText.setText(Tips.TIPS[(int)(Math.round(Math.random() * Tips.TIPS.length))]);
 
         cardView.addView(tipText);
 
