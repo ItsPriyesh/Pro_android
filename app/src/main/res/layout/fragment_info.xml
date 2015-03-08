@@ -29,7 +29,6 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginLeft="8dp"
-                android:text="10232"
                 android:textSize="36dp"
                 android:fontFamily="sans-serif-thin"
                 android:id="@+id/xpValue"
@@ -166,4 +165,31 @@
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/tipsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/generalInfoCard">
+
+   <!--     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tip"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            card_view:cardCornerRadius="4dp">
+
+            <TextView
+                android:text="Commit more often blah blah blah"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp" />
+
+        </android.support.v7.widget.CardView> -->
+    </LinearLayout>
 </RelativeLayout>

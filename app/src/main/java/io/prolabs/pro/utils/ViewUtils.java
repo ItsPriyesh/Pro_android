@@ -1,5 +1,7 @@
 package io.prolabs.pro.utils;
 
+import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import io.prolabs.pro.R;
@@ -34,5 +36,11 @@ public class ViewUtils {
         view.startAnimation(AnimationUtils.loadAnimation(context, ANIM_SLIDE_IN_TOP));
         view.setVisibility(View.VISIBLE);
     }*/
+
+    public static int dpToPx(int dp, Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
 
 }

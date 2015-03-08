@@ -8,11 +8,11 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
-import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -27,9 +27,11 @@ import io.prolabs.pro.eventing.GitHubDataAggregator;
 import io.prolabs.pro.eventing.GitHubReceiver;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Repo;
+import io.prolabs.pro.ui.common.SwipeDismissTouchListener;
 import io.prolabs.pro.utils.GitHubUtils;
+import io.prolabs.pro.utils.ViewUtils;
 
-public class InfoFragment extends Fragment{
+public class InfoFragment extends Fragment {
 
     private static final long UPDATE_XP_DELAY = 1000;
     @InjectView(R.id.xpCardView)
@@ -37,6 +39,11 @@ public class InfoFragment extends Fragment{
 
     @InjectView(R.id.generalInfoCard)
     CardView generalInfoCard;
+
+
+    @InjectView(R.id.tipsContainer)
+    ViewGroup tipsContainer;
+
 
     @InjectView(R.id.publicReposCount)
     TextView publicReposText;
@@ -85,6 +92,14 @@ public class InfoFragment extends Fragment{
         GitHubDataAggregator aggregator = new GitHubDataAggregator(gitHubReceiver);
         aggregator.register(this);
 
+
+
+        CardView cardView = createTipCard();
+
+        cardView.setOnTouchListener(getListener(cardView));
+
+        tipsContainer.addView(cardView);
+
         return view;
     }
 
@@ -98,9 +113,49 @@ public class InfoFragment extends Fragment{
         final int power = n - (int) d;
 
         final double magnitude = Math.pow(10, power);
-        final long shifted = Math.round(num*magnitude);
-        return (long)(shifted/magnitude);
+        final long shifted = Math.round(num * magnitude);
+        return (long) (shifted / magnitude);
     }
+
+
+    private CardView createTipCard() {
+        CardView cardView = new CardView(getActivity());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        int margin = ViewUtils.dpToPx(16, getActivity());
+
+        cardView.setLayoutParams(lp);
+        cardView.setClickable(true);
+        cardView.setPadding(margin, margin, margin, margin);
+        TextView tipText = new TextView(getActivity());
+        tipText.setText("Test");
+
+        cardView.addView(tipText);
+
+        cardView.setOnTouchListener(getListener(cardView));
+
+        return cardView;
+    }
+
+    private final SwipeDismissTouchListener getListener(CardView cardView) {
+        return new SwipeDismissTouchListener(
+                cardView,
+                null,
+                new SwipeDismissTouchListener.DismissCallbacks() {
+                    @Override
+                    public boolean canDismiss(Object token) {
+                        return true;
+                    }
+
+                    @Override
+                    public void onDismiss(View view, Object token) {
+                        tipsContainer.removeView(cardView);
+                        tipsContainer.addView(createTipCard());
+                    }
+                });
+    }
+
+
 
     @Subscribe
     public synchronized void updateXp(FullUserStats stats) {
