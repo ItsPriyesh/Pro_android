@@ -14,4 +14,5 @@
     <string name="title_activity_manual">ManualActivity</string>
     <string name="title_activity_linked_in_search">LinkedInSearchActivity</string>
     <string name="action_refresh">Refresh</string>
+    <string name="title_activity_xp">XpActivity</string>
 </resources>

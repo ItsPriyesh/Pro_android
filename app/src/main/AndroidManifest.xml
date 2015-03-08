@@ -38,6 +38,10 @@
             android:name=".ui.evaluator.LinkedInSearchActivity"
             android:label="@string/title_activity_linked_in_search" >
         </activity>
+        <activity
+            android:name=".ui.profile.XpActivity"
+            android:label="@string/title_activity_xp" >
+        </activity>
     </application>
 
 </manifest>

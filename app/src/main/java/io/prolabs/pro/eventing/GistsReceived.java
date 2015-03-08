@@ -1,4 +1,4 @@
-package io.prolabs.pro.api.github.eventing;
+package io.prolabs.pro.eventing;
 
 import java.util.List;
 

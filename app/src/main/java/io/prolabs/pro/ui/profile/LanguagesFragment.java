@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.google.common.collect.Ordering;
 import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
@@ -20,13 +19,11 @@ import butterknife.InjectView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.api.github.eventing.GitHubReceiver;
-import io.prolabs.pro.api.github.eventing.LanguagesReceived;
-import io.prolabs.pro.api.github.eventing.ResetDataRequest;
+import io.prolabs.pro.eventing.GitHubReceiver;
+import io.prolabs.pro.eventing.LanguagesReceived;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
-import io.prolabs.pro.utils.ValueComparableMap;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
@@ -37,16 +34,10 @@ public class LanguagesFragment extends Fragment {
     ListView languageListView;
     private GitHubService gitHubService;
     private GitHubReceiver gitHubReceiver;
-    private GitHubUser user;
-    private List<Repo> repos;
     private HashMap<Repo, List<Language>> languagesByRepo = new HashMap<>();
 
     public LanguagesFragment() {
         // Required empty public constructor
-    }
-
-    public void setUser(GitHubUser user) {
-        this.user = user;
     }
 
     @Override
@@ -61,10 +52,6 @@ public class LanguagesFragment extends Fragment {
         gitHubReceiver.requestAllLanguages();
 
         return view;
-    }
-
-    public void setRepos(List<Repo> repos) {
-        this.repos = repos;
     }
 
     @Subscribe
@@ -92,19 +79,5 @@ public class LanguagesFragment extends Fragment {
         }
         languageListView.setAdapter(
                 new LanguageAdapter(getActivity(), displayedLanguages));
-    }
-
-    private String getErrorMessage(RetrofitError error) {
-        RetrofitError.Kind errorKind = error.getKind();
-        switch (errorKind) {
-            case NETWORK:
-                return "Network error!";
-            case CONVERSION:
-                return "Data read error!";
-            case HTTP:
-                return "HTTP problem: status " + error.getResponse().getStatus();
-            default:
-                return "Something went wrong fetching your information!";
-        }
     }
 }

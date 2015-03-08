@@ -1,11 +1,10 @@
-package io.prolabs.pro.api.github.eventing;
+package io.prolabs.pro.eventing;
 
 import com.google.gson.JsonElement;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
@@ -43,7 +42,6 @@ public class GitHubReceiver {
     }
 
     public void requestAllLanguages() {
-        RECEIVE.post(new ResetDataRequest());
         service.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
@@ -58,25 +56,9 @@ public class GitHubReceiver {
         });
     }
 
-    public void getUser() {
-        service.getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser gitHubUser, Response response) {
-                if (gitHubUser != null)
-                    GitHubApi.setCurrentUser(gitHubUser);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
-    }
-
     private void requestLanguageForRepo(final Repo repo) {
         GitHubUser user = GitHubApi.getCurrentUser();
         if (user == null) {
-            getUser();
             return;
         }
         service.getLanguages(user.getUsername(), repo.getName(), new Callback<JsonElement>() {
@@ -90,7 +72,7 @@ public class GitHubReceiver {
 
             @Override
             public void failure(RetrofitError error) {
-                logRepoError(user, repo, error);
+                logRepoError(repo, error);
             }
         });
     }
@@ -119,7 +101,7 @@ public class GitHubReceiver {
         Timber.i(error.getMessage());
     }
 
-    private void logRepoError(GitHubUser user, Repo repo, RetrofitError error) {
+    private void logRepoError(Repo repo, RetrofitError error) {
         if (!is404(error))
             Timber.i("Failed to get repo: " + repo.getName());
         else

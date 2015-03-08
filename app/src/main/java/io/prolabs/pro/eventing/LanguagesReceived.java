@@ -1,9 +1,8 @@
-package io.prolabs.pro.api.github.eventing;
+package io.prolabs.pro.eventing;
 
 import java.util.List;
 
 import io.prolabs.pro.models.github.Language;
-import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Repo;
 
 /**

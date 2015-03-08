@@ -1,4 +1,4 @@
-package io.prolabs.pro.api.github.eventing;
+package io.prolabs.pro.eventing;
 
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;

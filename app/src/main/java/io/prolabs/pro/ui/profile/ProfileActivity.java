@@ -23,7 +23,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.api.github.eventing.GitHubReceiver;
+import io.prolabs.pro.eventing.GitHubReceiver;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
@@ -120,8 +120,6 @@ public class ProfileActivity extends BaseToolBarActivity {
     private void setupFragments(List<Repo> repos) {
         infoFragment.setRepos(repos);
         infoFragment.setUser(gitHubUser);
-        languagesFragment.setUser(gitHubUser);
-        languagesFragment.setRepos(repos);
     }
 
     private void setupInterface() {
