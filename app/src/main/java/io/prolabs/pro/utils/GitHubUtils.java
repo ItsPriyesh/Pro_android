@@ -40,10 +40,11 @@ public class GitHubUtils {
 
     public static List<CodeWeek> parseCodeFrequencyResponse(JsonElement json) {
         ArrayList<CodeWeek> weekList = new ArrayList<>();
+        if (!json.isJsonArray()) return weekList;
         JsonArray arrayOfWeeks = json.getAsJsonArray();
         for (JsonElement elem : arrayOfWeeks) {
             JsonArray week = elem.getAsJsonArray();
-            long time = week.get(0).getAsLong();
+            long time = week.get(0).getAsLong() * 1000;
             long added = week.get(1).getAsLong();
             long deleted = week.get(2).getAsLong();
             Date weekStart = new Date(time);

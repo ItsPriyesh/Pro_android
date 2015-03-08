@@ -3,7 +3,7 @@ package io.prolabs.pro.algo;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 import io.prolabs.pro.models.github.CodeWeek;
 import io.prolabs.pro.models.github.CommitActivity;
@@ -15,26 +15,46 @@ import io.prolabs.pro.models.github.Repo;
  */
 public class SimpleXpCalculator implements XpCalculator {
 
-    private static final double maxDays = 730.0;
+    private static final double MAX_DAYS = 730.0;
+    private static final double SCALE = 0.5;
 
     @Override
     public UserXp calculateXp(FullUserStats stats) {
-        //CommitActivity commitActivity = stats.getCommits();
+        Map<? extends Repo, ? extends List<CommitActivity>> commitActivity = stats.getCommits();
         Map<Repo, List<Language>> languagesByRepo = stats.getLanguagesByRepo();
         Map<Repo, List<CodeWeek>> codeWeeks = stats.getWeeksOfCodeByRepo();
-        List<Repo> repos = stats.getRepos();
+        Set<Repo> repos = stats.getRepos();
         double totalXp = 0;
         Date now = new Date();
 
-        for (List<CodeWeek> weeks : codeWeeks.values()) {
-            for (CodeWeek week : weeks) {
-                Date date = week.getWeekStart();
-                long added = week.getAddedLines();
-                long deleted = week.getDeletedLines();
-                long dayDiff = TimeUnit.MILLISECONDS.toDays(now.getTime() - date.getTime());
-                totalXp += (long) ((added + deleted) * Math.exp(dayDiff - maxDays));
+//        for (List<CodeWeek> weeks : codeWeeks.values()) {
+//            for (CodeWeek week : weeks) {
+//                Date date = week.getWeekStart();
+//                long added = week.getAddedLines();
+//                long deleted = week.getDeletedLines();
+//                long linesChanged = added - deleted;
+//                long dayDiff = (now.getTime() - date.getTime()) / (1000L * 60L * 60L * 24L);
+//                totalXp += (long) ((linesChanged) * Math.exp(MAX_DAYS - dayDiff) * 0.001);
+//            }
+//        }
+//
+        long popularity = 0;
+        for (Repo repo : repos) {
+            if (repo.isPrivate()) continue;
+            long forks = repo.getForks();
+            long stars = repo.getStars();
+            long watchers = repo.getWatchers() - stars;
+            popularity += 20 * forks + stars * 2 + watchers;
+            if (repo.hasIssues()) {
+                popularity *= 1.2;
             }
         }
+        for (List<CommitActivity> activities : commitActivity.values()) {
+            for (CommitActivity activity : activities) {
+                totalXp += activity.getTotalCommits();
+            }
+        }
+        totalXp += popularity * 10;
         return new UserXp(totalXp);
     }
 }

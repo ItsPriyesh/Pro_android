@@ -13,6 +13,9 @@ public class CommitActivity {
     @SerializedName("total")
     private int totalCommits;
 
+    @SerializedName("week")
+    private long week;
+
     public List<Integer> getCommitsPerDay() {
         return commitsPerDay;
     }

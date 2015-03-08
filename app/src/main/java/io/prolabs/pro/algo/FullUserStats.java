@@ -1,12 +1,11 @@
 package io.prolabs.pro.algo;
 
-import com.google.common.base.Optional;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.prolabs.pro.models.github.CodeWeek;
 import io.prolabs.pro.models.github.CommitActivity;
@@ -17,19 +16,12 @@ import io.prolabs.pro.models.github.Repo;
  * Created by Edmund on 2015-03-07.
  */
 public class FullUserStats {
-    private final Optional<CommitActivity> commits;
+    private final Map<? extends Repo, ? extends List<CommitActivity>> commits;
     private final Map<Repo, List<CodeWeek>> weeksOfCodeByRepo;
     private final Map<Repo, List<Language>> languagesByRepo;
-    private final List<Repo> repos;
+    private final Set<Repo> repos;
 
-    public FullUserStats(Map<Repo, List<CodeWeek>> weeksOfCode, Map<Repo, List<Language>> languagesByRepo, List<Repo> repos) {
-        this.commits = Optional.absent();
-        this.repos = repos;
-        this.weeksOfCodeByRepo = weeksOfCode;
-        this.languagesByRepo = languagesByRepo;
-    }
-
-    public FullUserStats(Optional<CommitActivity> commits, Map<Repo, List<CodeWeek>> weeksOfCode, Map<Repo, List<Language>> languagesByRepo, List<Repo> repos) {
+    public FullUserStats(Map<? extends Repo, ? extends List<CommitActivity>> commits, Map<Repo, List<CodeWeek>> weeksOfCode, Map<Repo, List<Language>> languagesByRepo, Set<Repo> repos) {
         this.commits = commits;
         this.weeksOfCodeByRepo = weeksOfCode;
         this.languagesByRepo = languagesByRepo;
@@ -37,8 +29,8 @@ public class FullUserStats {
     }
 
     public FullUserStats() {
-        this.commits = Optional.absent();
-        this.repos = new ArrayList<>();
+        this.commits = new HashMap<>();
+        this.repos = new HashSet<>();
         this.weeksOfCodeByRepo = new HashMap<>();
         this.languagesByRepo = new HashMap<>();
     }
@@ -62,19 +54,26 @@ public class FullUserStats {
         return new FullUserStats(commits, weeksOfCodeByRepo, languagesByRepo, repos);
     }
 
-    public List<Repo> getRepos() {
+    public Set<Repo> getRepos() {
         return repos;
     }
 
-    public FullUserStats setRepos(List<Repo> repos) {
+    public FullUserStats setRepos(Set<Repo> repos) {
         return new FullUserStats(commits, weeksOfCodeByRepo, languagesByRepo, repos);
     }
 
-    public Optional<CommitActivity> getCommits() {
+    public Map<? extends Repo, ? extends List<CommitActivity>> getCommits() {
         return commits;
     }
 
-    public FullUserStats setCommits(Optional<CommitActivity> commits) {
+    public FullUserStats addCommits(Repo repo, List<CommitActivity> activity) {
+        Map<Repo, List<CommitActivity>> newWeeks = new HashMap<>();
+        newWeeks.putAll(commits);
+        newWeeks.put(repo, activity);
+        return setCommits(newWeeks);
+    }
+
+    public FullUserStats setCommits(Map<Repo, List<CommitActivity>> commits) {
         return new FullUserStats(commits, weeksOfCodeByRepo, languagesByRepo, repos);
     }
 

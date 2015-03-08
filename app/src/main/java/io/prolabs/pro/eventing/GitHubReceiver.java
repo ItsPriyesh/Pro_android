@@ -4,11 +4,13 @@ import com.google.gson.JsonElement;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
+import java.util.HashSet;
 import java.util.List;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.models.github.CodeWeek;
+import io.prolabs.pro.models.github.CommitActivity;
 import io.prolabs.pro.models.github.Gist;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
@@ -45,7 +47,7 @@ public class GitHubReceiver {
 
     private void requestCodeWeeksForRepo(final Repo repo) {
         GitHubUser currentUser = GitHubApi.getCurrentUser();
-        service.getCodeFrequency(currentUser.getName(), repo.getName(), new Callback<JsonElement>() {
+        service.getCodeFrequency(currentUser.getUsername(), repo.getName(), new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
                 List<CodeWeek> codeWeeks = GitHubUtils.parseCodeFrequencyResponse(jsonElement);
@@ -54,7 +56,7 @@ public class GitHubReceiver {
 
             @Override
             public void failure(RetrofitError error) {
-
+                Timber.i("Failed to retrieve codeweeks for repo: " + repo.getName()+ ": " + error.getMessage());
             }
         });
     }
@@ -63,14 +65,31 @@ public class GitHubReceiver {
         service.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
+                RECEIVE.post(new ReposReceived(new HashSet<>(repos)));
                 for (Repo repo : repos) {
                     requestLanguageForRepo(repo);
                     requestCodeWeeksForRepo(repo);
+                    requestCommitHistoryForRepo(repo);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
+            }
+        });
+    }
+
+    private void requestCommitHistoryForRepo(Repo repo) {
+        GitHubUser user = GitHubApi.getCurrentUser();
+        service.getCommitActivity(user.getUsername(), repo.getName(), new Callback<List<CommitActivity>>() {
+            @Override
+            public void success(List<CommitActivity> commitActivity, Response response) {
+                RECEIVE.post(new CommitsReceived(repo, commitActivity));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Timber.i("Failed to retrieve commit history for " + repo.getName() + ": " + error.getMessage());
             }
         });
     }
