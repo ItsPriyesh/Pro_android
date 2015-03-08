@@ -37,7 +37,6 @@ public class XpActivity extends ActionBarActivity {
     @Subscribe
     public synchronized void updateXp(FullUserStats stats) {
         UserXp xp = xpCalculator.calculateXp(stats);
-
     }
 
     @Override
