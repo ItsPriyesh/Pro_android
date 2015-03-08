@@ -61,11 +61,11 @@ public class SimpleXpCalculator implements XpCalculator {
                 if (Math.abs((activity.getWeek() * 1000) - System.currentTimeMillis()) < ONE_WEEK) {
                     lastTwoWeeks.add(activity);
                 } else {
-                    totalXp += activity.getTotalCommits();
+                    totalXp += Math.exp((MAX_DAYS - activity.getWeek() * 1000) / (60L * 60L * 24L * 7L)) * activity.getTotalCommits();
                 }
             }
         }
-        Collections.sort(lastTwoWeeks, (lhs, rhs) -> (int)(rhs.getWeek() - lhs.getWeek()));
+        Collections.sort(lastTwoWeeks, (lhs, rhs) -> (int) (rhs.getWeek() - lhs.getWeek()));
         for (CommitActivity activity : lastTwoWeeks) {
             totalXp += activity.getTotalCommits() * 100;
         }

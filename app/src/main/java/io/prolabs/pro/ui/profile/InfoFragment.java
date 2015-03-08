@@ -38,7 +38,6 @@ public class InfoFragment extends Fragment{
     @InjectView(R.id.generalInfoCard)
     CardView generalInfoCard;
 
-    public static final int XP_SIG_FIGS = 3;
     @InjectView(R.id.publicReposCount)
     TextView publicReposText;
 
@@ -89,12 +88,13 @@ public class InfoFragment extends Fragment{
         return view;
     }
 
-    public static long roundToSignificantFigures(double num, int n) {
+    public static long roundToSignificantFigures(double num) {
         if(num == 0) {
             return 0;
         }
 
         final double d = Math.ceil(Math.log10(num < 0 ? -num: num));
+        final int n = (int)Math.ceil(d / 2);
         final int power = n - (int) d;
 
         final double magnitude = Math.pow(10, power);
@@ -114,7 +114,7 @@ public class InfoFragment extends Fragment{
 
     private void updateUI() {
         updating = false;
-        long rounded = roundToSignificantFigures(currentXp.getTotalXp(), XP_SIG_FIGS);
+        long rounded = roundToSignificantFigures(currentXp.getTotalXp());
         xpTextView.setText(String.valueOf(rounded));
     }
 
