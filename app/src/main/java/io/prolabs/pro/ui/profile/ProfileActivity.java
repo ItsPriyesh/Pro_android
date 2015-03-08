@@ -86,7 +86,7 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void getAuthUser() {
-        gitHubService.getAuthUser(new Callback<GitHubUser>() {
+        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
             @Override
             public void success(GitHubUser gitHubUser, Response response) {
                 setUser(gitHubUser);
@@ -102,7 +102,7 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void getAuthUserRepos() {
-        gitHubService.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
+        GitHubApi.getService().getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
                 requestData();
@@ -139,6 +139,7 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void handleApiCallError() {
+
         new AlertDialog.Builder(this)
                 .setTitle("Network error")
                 .setMessage("An error occurred while fetching your data. Please try again.")

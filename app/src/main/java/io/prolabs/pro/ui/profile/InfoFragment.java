@@ -2,6 +2,7 @@ package io.prolabs.pro.ui.profile;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -29,6 +31,7 @@ import io.prolabs.pro.utils.GitHubUtils;
 
 public class InfoFragment extends Fragment{
 
+    private static final long UPDATE_XP_DELAY = 1000;
     @InjectView(R.id.xpCardView)
     CardView xpCard;
 
@@ -54,6 +57,8 @@ public class InfoFragment extends Fragment{
     private GitHubReceiver gitHubReceiver;
     private GitHubDataAggregator aggregator;
     private XpCalculator xpCalculator;
+    private volatile boolean updating = false;
+    private UserXp currentXp;
 
     public InfoFragment() {
         // Required empty public constructor
@@ -99,8 +104,17 @@ public class InfoFragment extends Fragment{
 
     @Subscribe
     public synchronized void updateXp(FullUserStats stats) {
-        UserXp xp = xpCalculator.calculateXp(stats);
-        long rounded = roundToSignificantFigures(xp.getTotalXp(), XP_SIG_FIGS);
+        if (!updating) {
+            updating = true;
+            new Handler().postDelayed(this::updateUI, UPDATE_XP_DELAY);
+        }
+        currentXp = xpCalculator.calculateXp(stats);
+
+    }
+
+    private void updateUI() {
+        updating = false;
+        long rounded = roundToSignificantFigures(currentXp.getTotalXp(), XP_SIG_FIGS);
         xpTextView.setText(String.valueOf(rounded));
     }
 

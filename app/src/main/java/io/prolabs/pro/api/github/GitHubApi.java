@@ -40,6 +40,10 @@ public class GitHubApi {
         return gitHubService;
     }
 
+    public static void deleteService() {
+        gitHubService = null;
+    }
+
     public static GitHubService getService(String authKey) {
         if (gitHubService == null) {
             RestAdapter restAdapter = new RestAdapter.Builder()
@@ -84,5 +88,6 @@ public class GitHubApi {
 
     public static void clearCurrentAuth() {
         Hawk.remove(ProApp.GITHUB_AUTH_KEY);
+        Hawk.remove(ProApp.GITHUB_USER);
     }
 }

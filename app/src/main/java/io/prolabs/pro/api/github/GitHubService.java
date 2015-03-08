@@ -7,6 +7,7 @@ import java.util.List;
 import io.prolabs.pro.models.github.CodeWeek;
 import io.prolabs.pro.models.github.CommitActivity;
 import io.prolabs.pro.models.github.Gist;
+import io.prolabs.pro.models.github.Limits;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
 import retrofit.Callback;
@@ -15,6 +16,9 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface GitHubService {
+
+    @GET("/rate_limit")
+    void getRateLimit(Callback<Limits> callback);
 
     @GET("/user")
     void getAuthUser(Callback<GitHubUser> callback);

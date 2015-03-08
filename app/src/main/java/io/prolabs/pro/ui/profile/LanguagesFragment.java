@@ -2,6 +2,7 @@ package io.prolabs.pro.ui.profile;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,11 +30,12 @@ import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
 
-    private final Object languageLock = new Object();
+    private static final long UPDATE_LANG_DELAY = 1000;
     @InjectView(R.id.languageList)
     ListView languageListView;
     private GitHubService gitHubService;
     private GitHubReceiver gitHubReceiver;
+    private volatile boolean updating = false;
     private HashMap<Repo, List<Language>> languagesByRepo = new HashMap<>();
 
     public LanguagesFragment() {
@@ -55,14 +57,15 @@ public class LanguagesFragment extends Fragment {
     }
 
     @Subscribe
-    public void receivedALanguage(LanguagesReceived received) {
+    public synchronized void receivedALanguage(LanguagesReceived received) {
         languagesByRepo.put(received.getRepo(), received.getLanguages());
-        synchronized (languageLock) {
-            updateUI();
+        if (!updating) {
+            updating = true;
+            new Handler().postDelayed(this::updateUI, UPDATE_LANG_DELAY);
         }
     }
 
-    private void updateUI() {
+    private synchronized void updateUI() {
         Map<String, Long> displayedLanguages = new HashMap<>();
         for (List<Language> langs : languagesByRepo.values()) {
             for (Language lang : langs) {
@@ -79,5 +82,6 @@ public class LanguagesFragment extends Fragment {
         }
         languageListView.setAdapter(
                 new LanguageAdapter(getActivity(), displayedLanguages));
+        updating = false;
     }
 }

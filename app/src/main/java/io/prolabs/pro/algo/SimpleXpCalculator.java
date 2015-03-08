@@ -1,5 +1,8 @@
 package io.prolabs.pro.algo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +18,7 @@ import io.prolabs.pro.models.github.Repo;
  */
 public class SimpleXpCalculator implements XpCalculator {
 
+    private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
     private static final double MAX_DAYS = 730.0;
     private static final double SCALE = 0.5;
 
@@ -49,12 +53,23 @@ public class SimpleXpCalculator implements XpCalculator {
                 popularity *= 1.2;
             }
         }
+
+        List<CommitActivity> lastTwoWeeks = new ArrayList<>();
+
         for (List<CommitActivity> activities : commitActivity.values()) {
             for (CommitActivity activity : activities) {
-                totalXp += activity.getTotalCommits();
+                if (activity.getWeek() - System.currentTimeMillis() < ONE_WEEK) {
+                    lastTwoWeeks.add(activity);
+                } else {
+                    totalXp += activity.getTotalCommits();
+                }
             }
         }
-        totalXp += popularity * 10;
+        Collections.sort(lastTwoWeeks, (lhs, rhs) -> (int)(rhs.getWeek() - lhs.getWeek()));
+        for (CommitActivity activity : lastTwoWeeks) {
+            totalXp += activity.getTotalCommits() * 100;
+        }
+        totalXp += popularity * 5;
         return new UserXp(totalXp);
     }
 }
