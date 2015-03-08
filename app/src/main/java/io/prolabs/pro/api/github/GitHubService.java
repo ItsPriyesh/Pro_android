@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import java.util.List;
 
+import io.prolabs.pro.models.github.CodeWeek;
 import io.prolabs.pro.models.github.CommitActivity;
 import io.prolabs.pro.models.github.Gist;
 import io.prolabs.pro.models.github.Repo;

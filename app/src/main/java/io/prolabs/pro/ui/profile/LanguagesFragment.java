@@ -49,7 +49,7 @@ public class LanguagesFragment extends Fragment {
         gitHubReceiver = GitHubReceiver.getInstance();
         gitHubReceiver.register(this);
 
-        gitHubReceiver.requestAllLanguages();
+        gitHubReceiver.requestAllStats();
 
         return view;
     }

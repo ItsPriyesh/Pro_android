@@ -105,6 +105,7 @@ public class ProfileActivity extends BaseToolBarActivity {
         gitHubService.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
+                requestData();
                 setupFragments(repos);
                 setupInterface();
             }
@@ -115,6 +116,10 @@ public class ProfileActivity extends BaseToolBarActivity {
                 handleApiCallError();
             }
         });
+    }
+
+    private void requestData() {
+        GitHubReceiver.getInstance().requestAllStats();
     }
 
     private void setupFragments(List<Repo> repos) {
@@ -177,7 +182,7 @@ public class ProfileActivity extends BaseToolBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                GitHubReceiver.getInstance().requestAllLanguages();
+                requestData();
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));

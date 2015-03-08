@@ -8,6 +8,7 @@ import java.util.List;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
+import io.prolabs.pro.models.github.CodeWeek;
 import io.prolabs.pro.models.github.Gist;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
@@ -41,12 +42,30 @@ public class GitHubReceiver {
         RECEIVE.register(obj);
     }
 
-    public void requestAllLanguages() {
+
+    private void requestCodeWeeksForRepo(final Repo repo) {
+        GitHubUser currentUser = GitHubApi.getCurrentUser();
+        service.getCodeFrequency(currentUser.getName(), repo.getName(), new Callback<JsonElement>() {
+            @Override
+            public void success(JsonElement jsonElement, Response response) {
+                List<CodeWeek> codeWeeks = GitHubUtils.parseCodeFrequencyResponse(jsonElement);
+                RECEIVE.post(new CodeWeeksReceived(repo, codeWeeks));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    public void requestAllStats() {
         service.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
                 for (Repo repo : repos) {
                     requestLanguageForRepo(repo);
+                    requestCodeWeeksForRepo(repo);
                 }
             }
 
@@ -55,6 +74,7 @@ public class GitHubReceiver {
             }
         });
     }
+
 
     private void requestLanguageForRepo(final Repo repo) {
         GitHubUser user = GitHubApi.getCurrentUser();
