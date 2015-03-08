@@ -120,20 +120,26 @@ public class InfoFragment extends Fragment {
 
 
     private CardView createTipCard() {
-        CardView cardView = new CardView(getActivity());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         int margin = ViewUtils.dpToPx(16, getActivity());
 
-        cardView.setLayoutParams(lp);
+        LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        containerParams.setMargins(margin, 0, margin, margin);
+
+        CardView.LayoutParams cardParams = new CardView.LayoutParams(
+                CardView.LayoutParams.MATCH_PARENT, CardView.LayoutParams.WRAP_CONTENT);
+        cardParams.setMargins(margin, margin, margin, margin);
+
+        CardView cardView = new CardView(getActivity());
+        cardView.setLayoutParams(containerParams);
         cardView.setClickable(true);
-        cardView.setPadding(margin, margin, margin, margin);
+        cardView.setOnTouchListener(getListener(cardView));
+
         TextView tipText = new TextView(getActivity());
-        tipText.setText(Tips.TIPS[(int)(Math.round(Math.random() * Tips.TIPS.length))]);
+        tipText.setLayoutParams(cardParams);
+        tipText.setText(Tips.TIPS[(int)(Math.floor(Math.random() * Tips.TIPS.length))]);
 
         cardView.addView(tipText);
-
-        cardView.setOnTouchListener(getListener(cardView));
 
         return cardView;
     }

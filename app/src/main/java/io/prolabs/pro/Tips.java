@@ -6,7 +6,7 @@ package io.prolabs.pro;
 public class Tips {
     public static final String[] TIPS = {
             "Try to commit at least once every day!",
-            "Code something new every once and a while!",
+            "Code something new every once in a while!",
             "Try new languages!",
             "Spread the word! The more forks and stars, the better!",
             "Open your sources! We don't analyze private repositories!"

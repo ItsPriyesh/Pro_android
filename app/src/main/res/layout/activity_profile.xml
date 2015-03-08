@@ -62,7 +62,7 @@
         android:layout_below="@id/header" />
 
 
-    <com.melnykov.fab.FloatingActionButton
+  <!--  <com.melnykov.fab.FloatingActionButton
         android:id="@+id/search_fab"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -73,5 +73,5 @@
         android:src="@drawable/ic_search_white"
         fab:fab_colorNormal="@color/secondary_accent"
         fab:fab_colorPressed="@color/secondary_accent"
-        fab:fab_colorRipple="@color/white_50_opacity" />
+        fab:fab_colorRipple="@color/white_50_opacity" /> -->
 </RelativeLayout>

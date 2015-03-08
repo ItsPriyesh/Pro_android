@@ -18,18 +18,15 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.eventing.GitHubReceiver;
-import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
+import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.common.SlidingTabLayout;
-import io.prolabs.pro.ui.evaluator.LinkedInSearchActivity;
-import io.prolabs.pro.ui.evaluator.ManualActivity;
 import io.prolabs.pro.ui.settings.SettingsActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -151,7 +148,7 @@ public class ProfileActivity extends BaseToolBarActivity {
         this.gitHubUser = gitHubUser;
     }
 
-    @OnClick(R.id.search_fab)
+   /* @OnClick(R.id.search_fab)
     public void searchFabClicked() {
         showJobSelector();
     }
@@ -171,7 +168,7 @@ public class ProfileActivity extends BaseToolBarActivity {
                     }
                 })
                 .create().show();
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
