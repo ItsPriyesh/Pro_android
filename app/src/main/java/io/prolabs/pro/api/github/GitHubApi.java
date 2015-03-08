@@ -6,6 +6,7 @@ import com.orhanobut.hawk.Hawk;
 import com.squareup.okhttp.OkHttpClient;
 
 import io.prolabs.pro.ProApp;
+import io.prolabs.pro.models.github.GitHubUser;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
@@ -18,6 +19,7 @@ public class GitHubApi {
     private static final String AUTH_HEADER_NAME = "Authorization";
     private static GitHubService gitHubService = null;
     private static String AUTH_HEADER_VALUE;
+    private static GitHubUser currentUser;
 
     public static GitHubService getService(String username, String password) {
         if (gitHubService == null) {
@@ -66,7 +68,17 @@ public class GitHubApi {
         return AUTH_HEADER_VALUE;
     }
 
-    public static void saveCurrentAuth() {
+    public static GitHubUser getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(GitHubUser user) {
+        currentUser = user;
+    }
+
+    public static void saveCurrentAuth(GitHubUser user) {
+        setCurrentUser(user);
+        Hawk.put(ProApp.GITHUB_USER, user);
         Hawk.put(ProApp.GITHUB_AUTH_KEY, AUTH_HEADER_VALUE);
     }
 

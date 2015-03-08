@@ -8,12 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.common.collect.Ordering;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -21,20 +21,21 @@ import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.api.github.eventing.GitHubReceiver;
-import io.prolabs.pro.api.github.eventing.LanguageDataRequest;
 import io.prolabs.pro.api.github.eventing.LanguagesReceived;
+import io.prolabs.pro.api.github.eventing.ResetDataRequest;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
+import io.prolabs.pro.utils.ValueComparableMap;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
 
-    private final TreeMap<String, Integer> displayedLanguages = new TreeMap<>();
     private final Object languageLock = new Object();
     @InjectView(R.id.languageList)
     ListView languageListView;
+    private Map<String, Long> displayedLanguages = new HashMap<>();
     private GitHubService gitHubService;
     private GitHubReceiver gitHubReceiver;
     private GitHubUser user;
@@ -57,7 +58,7 @@ public class LanguagesFragment extends Fragment {
         gitHubReceiver = GitHubReceiver.getInstance();
         gitHubReceiver.register(this);
 
-        askForLanguages();
+        gitHubReceiver.requestAllLanguages();
 
         return view;
     }
@@ -66,10 +67,10 @@ public class LanguagesFragment extends Fragment {
         this.repos = repos;
     }
 
-    private void askForLanguages() {
-        for (Repo repo : this.repos) {
-            LanguageDataRequest request = new LanguageDataRequest(user, repo);
-            gitHubReceiver.ask(request);
+    @Subscribe
+    public void resetData(ResetDataRequest request) {
+        synchronized (languageLock) {
+            displayedLanguages = new HashMap<>();
         }
     }
 
@@ -81,23 +82,18 @@ public class LanguagesFragment extends Fragment {
     private void updateUI(GitHubUser user, List<Language> langs) {
         for (Language lang : langs) {
             String name = lang.getName();
-            int bytes = lang.getBytes();
+            long bytes = lang.getBytes();
             synchronized (languageLock) {
                 Timber.i("Adding language: " + lang.getName());
-                int bytesToAdd = bytes;
-                Integer bytesAlreadyPresent = displayedLanguages.get(name);
-                if (bytesAlreadyPresent != null) {
-                    bytesToAdd += bytesAlreadyPresent;
+                long bytesToAdd = bytes;
+                if (displayedLanguages.containsKey(name)) {
+                    bytesToAdd += displayedLanguages.get(name);
                 }
                 displayedLanguages.put(name, bytesToAdd);
             }
         }
-        ArrayList<Language> languageArrayList = new ArrayList<>();
-        for (Map.Entry<String, Integer> language : displayedLanguages.entrySet()) {
-            languageArrayList.add(new Language(language.getKey(), language.getValue()));
-        }
         languageListView.setAdapter(
-                new LanguageListAdapter(getActivity(), languageArrayList));
+                new LanguageAdapter(getActivity(), displayedLanguages));
     }
 
     private String getErrorMessage(RetrofitError error) {

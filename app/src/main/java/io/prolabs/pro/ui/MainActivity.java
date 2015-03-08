@@ -22,7 +22,7 @@ import io.prolabs.pro.utils.ViewUtils;
 public class MainActivity extends BaseToolBarActivity {
 
     final Handler handler = new Handler();
-    final Runnable authCheckComplete = () -> onAuthCheckComplete();
+    final Runnable authCheckComplete = this::onAuthCheckComplete;
     @InjectView(R.id.splashContainer)
     View splashContainer;
     @InjectView(R.id.networkErrorContainer)
@@ -83,6 +83,7 @@ public class MainActivity extends BaseToolBarActivity {
 
         if (githubAuthExists) {
             GitHubApi.getService(Hawk.get(ProApp.GITHUB_AUTH_KEY));
+            GitHubApi.setCurrentUser(Hawk.get(ProApp.GITHUB_USER));
             startActivity(new Intent(this, ProfileActivity.class));
             finish();
         } else {

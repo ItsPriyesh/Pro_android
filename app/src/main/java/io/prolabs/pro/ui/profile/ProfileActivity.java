@@ -23,6 +23,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
+import io.prolabs.pro.api.github.eventing.GitHubReceiver;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
@@ -53,7 +54,6 @@ public class ProfileActivity extends BaseToolBarActivity {
 
     private GitHubService gitHubService;
     private GitHubUser gitHubUser;
-    private List<Repo> repos;
     private InfoFragment infoFragment;
     private LanguagesFragment languagesFragment;
     private ProgressDialog progressDialog;
@@ -105,8 +105,7 @@ public class ProfileActivity extends BaseToolBarActivity {
         gitHubService.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
             @Override
             public void success(List<Repo> repos, Response response) {
-                setRepos(repos);
-                setupFragments();
+                setupFragments(repos);
                 setupInterface();
             }
 
@@ -118,7 +117,7 @@ public class ProfileActivity extends BaseToolBarActivity {
         });
     }
 
-    private void setupFragments() {
+    private void setupFragments(List<Repo> repos) {
         infoFragment.setRepos(repos);
         infoFragment.setUser(gitHubUser);
         languagesFragment.setUser(gitHubUser);
@@ -146,10 +145,6 @@ public class ProfileActivity extends BaseToolBarActivity {
 
     private void setUser(GitHubUser gitHubUser) {
         this.gitHubUser = gitHubUser;
-    }
-
-    private void setRepos(List<Repo> repos) {
-        this.repos = repos;
     }
 
     @OnClick(R.id.search_fab)
@@ -183,6 +178,9 @@ public class ProfileActivity extends BaseToolBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_refresh:
+                GitHubReceiver.getInstance().requestAllLanguages();
+                return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;

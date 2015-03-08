@@ -103,7 +103,7 @@ public class LinkedInSearchActivity extends BaseToolBarActivity
 
 
     private void onAccessTokenReceived() {
-        Hawk.put(ProApp.GITHUB_AUTH_KEY, linkedInAccessToken);
+        Hawk.put(ProApp.LINKEDIN_AUTH_KEY, linkedInAccessToken);
     }
 
     public void showLoginDialog() {

@@ -37,6 +37,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.+'
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.android.support:support-v4:21.0.3'
+    compile group: 'com.google.guava', name: 'guava', version: '18.0'
 
     // Square
     compile 'com.squareup.retrofit:retrofit:1.9.0'

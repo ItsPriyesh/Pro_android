@@ -60,7 +60,7 @@ public class LoginFragment extends Fragment {
         gitHubService.getAuthUser(new Callback<GitHubUser>() {
             @Override
             public void success(GitHubUser user, Response response) {
-                GitHubApi.saveCurrentAuth();
+                GitHubApi.saveCurrentAuth(user);
                 startActivity(new Intent(getActivity(), ProfileActivity.class));
                 getActivity().finish();
             }

@@ -2,7 +2,6 @@ package io.prolabs.pro.api.github.eventing;
 
 import com.google.gson.JsonElement;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
+import io.prolabs.pro.models.github.Gist;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
@@ -23,15 +23,11 @@ import timber.log.Timber;
  * Created by Edmund on 2015-03-07.
  */
 public class GitHubReceiver {
-    private static final int MAX_RETRIES = 5;
     private static GitHubReceiver instance = null;
     private static GitHubService service = GitHubApi.getService();
     private final Bus RECEIVE = new Bus(ThreadEnforcer.MAIN);
-    private final Bus SEND = new Bus(ThreadEnforcer.ANY);
-    private ConcurrentHashMap<Repo, Integer> retries = new ConcurrentHashMap<>();
 
     private GitHubReceiver() {
-        SEND.register(this);
     }
 
     public static GitHubReceiver getInstance() {
@@ -46,14 +42,43 @@ public class GitHubReceiver {
         RECEIVE.register(obj);
     }
 
-    public void ask(Object obj) {
-        SEND.post(obj);
+    public void requestAllLanguages() {
+        RECEIVE.post(new ResetDataRequest());
+        service.getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
+            @Override
+            public void success(List<Repo> repos, Response response) {
+                for (Repo repo : repos) {
+                    requestLanguageForRepo(repo);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
     }
 
-    @Subscribe
-    public void requestLanguageForRepo(LanguageDataRequest request) {
-        GitHubUser user = request.getUser();
-        Repo repo = request.getRepo();
+    public void getUser() {
+        service.getAuthUser(new Callback<GitHubUser>() {
+            @Override
+            public void success(GitHubUser gitHubUser, Response response) {
+                if (gitHubUser != null)
+                    GitHubApi.setCurrentUser(gitHubUser);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void requestLanguageForRepo(Repo repo) {
+        GitHubUser user = GitHubApi.getCurrentUser();
+        if (user == null) {
+            getUser();
+            return;
+        }
         service.getLanguages(user.getUsername(), repo.getName(), new Callback<JsonElement>() {
             @Override
             public void success(JsonElement jsonElement, Response response) {
@@ -65,23 +90,24 @@ public class GitHubReceiver {
 
             @Override
             public void failure(RetrofitError error) {
-                recoverFromRepoError(user, repo, error);
+                logRepoError(user, repo, error);
             }
         });
     }
 
-    private boolean isRetryable(RetrofitError.Kind errorKind) {
-        boolean retryable = false;
-        switch (errorKind) {
-            case NETWORK:
-            case CONVERSION:
-                retryable = true;
-            case HTTP:
-            case UNEXPECTED:
-            default:
-                retryable = false;
-        }
-        return retryable;
+    public void requestGists() {
+        service.getGists(new Callback<List<Gist>>() {
+
+            @Override
+            public void success(List<Gist> gists, Response response) {
+                RECEIVE.post(new GistsReceived(gists));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                logError(error);
+            }
+        });
     }
 
     private boolean is404(RetrofitError error) {
@@ -89,23 +115,14 @@ public class GitHubReceiver {
                 error.getResponse().getStatus() == 404;
     }
 
-    private void recoverFromRepoError(GitHubUser user, Repo repo, RetrofitError error) {
-        RetrofitError.Kind errorKind = error.getKind();
-        if (!is404(error)) {
-            if (isRetryable(errorKind)) {
-                tryToRetry(user, repo);
-            } else {
-                Timber.i("Failed to get repo: " + repo.getName());
-            }
-        }
+    private void logError(RetrofitError error) {
+        Timber.i(error.getMessage());
     }
 
-    private void tryToRetry(GitHubUser user, Repo repo) {
-        Integer unsafeRetriesSoFar = retries.get(repo);
-        int retriesSoFar = (unsafeRetriesSoFar == null) ? 0 : unsafeRetriesSoFar;
-        if (retriesSoFar != MAX_RETRIES) {
-            retries.put(repo, retriesSoFar + 1);
-            SEND.post(new LanguageDataRequest(user, repo));
-        }
+    private void logRepoError(GitHubUser user, Repo repo, RetrofitError error) {
+        if (!is404(error))
+            Timber.i("Failed to get repo: " + repo.getName());
+        else
+            Timber.i("Private repo could not be downloaded: " + repo.getName());
     }
 }
