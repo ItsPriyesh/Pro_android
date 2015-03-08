@@ -58,7 +58,7 @@ public class SimpleXpCalculator implements XpCalculator {
 
         for (List<CommitActivity> activities : commitActivity.values()) {
             for (CommitActivity activity : activities) {
-                if (activity.getWeek() - System.currentTimeMillis() < ONE_WEEK) {
+                if (Math.abs((activity.getWeek() * 1000) - System.currentTimeMillis()) < ONE_WEEK) {
                     lastTwoWeeks.add(activity);
                 } else {
                     totalXp += activity.getTotalCommits();
