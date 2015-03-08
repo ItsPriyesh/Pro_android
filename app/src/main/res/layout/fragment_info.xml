@@ -6,7 +6,6 @@
     tools:context="io.prolabs.pro.ui.profile.InfoFragment">
 
     <android.support.v7.widget.CardView
-        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
@@ -27,7 +26,7 @@
             android:gravity="center">
 
             <TextView
-                android:text="2223"
+                android:textSize="48dp"
                 android:fontFamily="sans-serif-thin"
                 android:id="@+id/xpValue"
                 android:layout_width="match_parent"
@@ -57,7 +56,6 @@
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/generalInfoCard"
-        android:visibility="gone"
         android:layout_below="@id/xpCardView"
         android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
