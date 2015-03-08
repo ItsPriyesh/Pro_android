@@ -1,8 +1,6 @@
 package io.prolabs.pro.utils;
 
-import android.content.Context;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 
 import io.prolabs.pro.R;
 
@@ -27,7 +25,7 @@ public class ViewUtils {
         return view.getVisibility() == View.INVISIBLE;
     }
 
-    public static void animateTurnUp(View view, Context context) {
+    /*public static void animateTurnUp(View view, Context context) {
         view.startAnimation(AnimationUtils.loadAnimation(context, ANIM_TURN_UP));
         view.setVisibility(View.VISIBLE);
     }
@@ -35,6 +33,6 @@ public class ViewUtils {
     public static void animateSlideInTop(View view, Context context) {
         view.startAnimation(AnimationUtils.loadAnimation(context, ANIM_SLIDE_IN_TOP));
         view.setVisibility(View.VISIBLE);
-    }
+    }*/
 
 }

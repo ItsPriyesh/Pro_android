@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -24,11 +23,9 @@ import io.prolabs.pro.algo.XpCalculators;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.eventing.GitHubDataAggregator;
 import io.prolabs.pro.eventing.GitHubReceiver;
-import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.utils.GitHubUtils;
-import io.prolabs.pro.utils.ViewUtils;
 
 public class InfoFragment extends Fragment{
 
@@ -107,11 +104,4 @@ public class InfoFragment extends Fragment{
         xpTextView.setText(String.valueOf(rounded));
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        ViewUtils.animateTurnUp(generalInfoCard, getActivity());
-        ViewUtils.animateSlideInTop(xpCard, getActivity());
-    }
 }
