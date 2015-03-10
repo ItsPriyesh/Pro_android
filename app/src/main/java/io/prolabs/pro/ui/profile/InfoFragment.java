@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -23,9 +24,9 @@ import io.prolabs.pro.algo.FullUserStats;
 import io.prolabs.pro.algo.UserXp;
 import io.prolabs.pro.algo.XpCalculator;
 import io.prolabs.pro.algo.XpCalculators;
-import io.prolabs.pro.api.github.GitHubService;
+import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.eventing.GitHubDataAggregator;
-import io.prolabs.pro.eventing.GitHubReceiver;
+import io.prolabs.pro.eventing.GitHubRequester;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.ui.common.SwipeDismissTouchListener;
@@ -41,10 +42,8 @@ public class InfoFragment extends Fragment {
     @InjectView(R.id.generalInfoCard)
     CardView generalInfoCard;
 
-
     @InjectView(R.id.tipsContainer)
     ViewGroup tipsContainer;
-
 
     @InjectView(R.id.publicReposCount)
     TextView publicReposText;
@@ -58,25 +57,27 @@ public class InfoFragment extends Fragment {
     @InjectView(R.id.xpValue)
     TextView xpTextView;
 
-    private GitHubUser gitHubUser;
-    private List<Repo> repos;
-    private GitHubService gitHubService;
-    private GitHubReceiver gitHubReceiver;
-    private GitHubDataAggregator aggregator;
+    private List<Repo> repos = new ArrayList<>();
     private XpCalculator xpCalculator;
     private volatile boolean updating = false;
-    private UserXp currentXp;
+    private volatile FullUserStats currentStats;
 
     public InfoFragment() {
         // Required empty public constructor
     }
 
-    public void setUser(GitHubUser gitHubUser) {
-        this.gitHubUser = gitHubUser;
-    }
+    public static long roundToSignificantFigures(double num) {
+        if (num == 0) {
+            return 0;
+        }
 
-    public void setRepos(List<Repo> repos) {
-        this.repos = repos;
+        final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
+        final int n = (int) Math.ceil(d / 2);
+        final int power = n - (int) d;
+
+        final double magnitude = Math.pow(10, power);
+        final long shifted = Math.round(num * magnitude);
+        return (long) (shifted / magnitude);
     }
 
     @Override
@@ -84,16 +85,14 @@ public class InfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         ButterKnife.inject(this, view);
 
-        publicReposText.setText(String.valueOf(gitHubUser.getPublicRepoCount()));
-        privateReposText.setText(String.valueOf(gitHubUser.getPrivateReposCount()));
-        totalStarsText.setText(String.valueOf(GitHubUtils.getTotalStars(repos)));
+        GitHubUser user = GitHubApi.getCurrentUser();
 
-        gitHubReceiver = GitHubReceiver.getInstance();
+        publicReposText.setText(String.valueOf(user.getPublicRepoCount()));
+        privateReposText.setText(String.valueOf(user.getPrivateReposCount()));
+
         xpCalculator = XpCalculators.SIMPLE;
-        GitHubDataAggregator aggregator = new GitHubDataAggregator(gitHubReceiver);
+        GitHubDataAggregator aggregator = GitHubDataAggregator.getInstance();
         aggregator.register(this);
-
-
 
         CardView cardView = createTipCard();
 
@@ -103,21 +102,6 @@ public class InfoFragment extends Fragment {
 
         return view;
     }
-
-    public static long roundToSignificantFigures(double num) {
-        if(num == 0) {
-            return 0;
-        }
-
-        final double d = Math.ceil(Math.log10(num < 0 ? -num: num));
-        final int n = (int)Math.ceil(d / 2);
-        final int power = n - (int) d;
-
-        final double magnitude = Math.pow(10, power);
-        final long shifted = Math.round(num * magnitude);
-        return (long) (shifted / magnitude);
-    }
-
 
     private CardView createTipCard() {
         int margin = ViewUtils.dpToPx(16, getActivity());
@@ -137,7 +121,7 @@ public class InfoFragment extends Fragment {
 
         TextView tipText = new TextView(getActivity());
         tipText.setLayoutParams(cardParams);
-        tipText.setText(Tips.TIPS[(int)(Math.floor(Math.random() * Tips.TIPS.length))]);
+        tipText.setText(Tips.TIPS[(int) (Math.floor(Math.random() * Tips.TIPS.length))]);
 
         cardView.addView(tipText);
 
@@ -163,21 +147,23 @@ public class InfoFragment extends Fragment {
     }
 
 
-
     @Subscribe
-    public synchronized void updateXp(FullUserStats stats) {
+    public synchronized void updateStats(FullUserStats stats) {
         if (!updating) {
             updating = true;
             new Handler().postDelayed(this::updateUI, UPDATE_XP_DELAY);
         }
-        currentXp = xpCalculator.calculateXp(stats);
+        currentStats = stats;
 
     }
 
     private void updateUI() {
-        updating = false;
+        List<Repo> repoList = new ArrayList<>(currentStats.getRepos());
+        totalStarsText.setText(String.valueOf(GitHubUtils.getTotalStars(repoList)));
+        UserXp currentXp = xpCalculator.calculateXp(currentStats);
         long rounded = roundToSignificantFigures(currentXp.getTotalXp());
         xpTextView.setText(String.valueOf(rounded));
+        updating = false;
     }
 
 }

@@ -17,50 +17,46 @@ import io.prolabs.pro.models.github.Repo;
  * Created by Edmund on 2015-03-08.
  */
 public class GitHubDataAggregator {
-    private static GitHubDataAggregator instance;
-    private GitHubService service;
-    private GitHubReceiver receiver;
-    private Bus RECEIVE;
+    private static GitHubDataAggregator instance = new GitHubDataAggregator();
+    private Bus bus;
     private FullUserStats currentStats;
-    private Map<Repo, List<Language>> languagesByRepo;
 
-    public GitHubDataAggregator(GitHubReceiver receiver) {
-        service = GitHubApi.getService();
-
-        RECEIVE = new Bus();
-        this.receiver = receiver;
-        receiver.register(this);
+    private GitHubDataAggregator() {
+        GitHubRequester.getInstance().register(this);
+        bus = new Bus();
         currentStats = new FullUserStats();
-        languagesByRepo = new HashMap<>();
+    }
+
+    public static GitHubDataAggregator getInstance() {
+        return instance;
     }
 
     public void register(Object listener) {
-        RECEIVE.register(listener);
+        bus.register(listener);
     }
 
     @Subscribe
     public synchronized void receiveLanguages(LanguagesReceived received) {
-        languagesByRepo.put(received.getRepo(), received.getLanguages());
-        currentStats = currentStats.setLanguagesByRepo(languagesByRepo);
-        RECEIVE.post(currentStats);
+        currentStats = currentStats.addLanguagesByRepo(received.getRepo(), received.getLanguages());
+        bus.post(currentStats);
     }
 
     @Subscribe
     public synchronized void receiveCodeWeeks(CodeWeeksReceived received) {
         currentStats = currentStats.addWeeksOfCode(received.getRepo(), received.getCodeWeeks());
-        RECEIVE.post(currentStats);
+        bus.post(currentStats);
     }
 
     @Subscribe
     public synchronized void receiveCommitActiivity(CommitsReceived received) {
         currentStats = currentStats.addCommits(received.getRepo(), received.getCommitActivity());
-        RECEIVE.post(currentStats);
+        bus.post(currentStats);
     }
 
     @Subscribe
     public synchronized void receiveRepos(ReposReceived received) {
         currentStats = currentStats.setRepos(received.getRepos());
-        RECEIVE.post(currentStats);
+        bus.post(currentStats);
     }
 
 }

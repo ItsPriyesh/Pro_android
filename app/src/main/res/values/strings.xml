@@ -15,4 +15,5 @@
     <string name="title_activity_linked_in_search">LinkedInSearchActivity</string>
     <string name="action_refresh">Refresh</string>
     <string name="title_activity_xp">XpActivity</string>
+    <string name="pro_score">Pro\nScore</string>
 </resources>

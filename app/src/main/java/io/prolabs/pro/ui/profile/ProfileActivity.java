@@ -22,7 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.eventing.GitHubReceiver;
+import io.prolabs.pro.eventing.GitHubRequester;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
@@ -103,7 +103,6 @@ public class ProfileActivity extends BaseToolBarActivity {
             @Override
             public void success(List<Repo> repos, Response response) {
                 requestData();
-                setupFragments(repos);
                 setupInterface();
             }
 
@@ -116,12 +115,7 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void requestData() {
-        GitHubReceiver.getInstance().requestAllStats();
-    }
-
-    private void setupFragments(List<Repo> repos) {
-        infoFragment.setRepos(repos);
-        infoFragment.setUser(gitHubUser);
+        GitHubRequester.getInstance().requestAllStats();
     }
 
     private void setupInterface() {
@@ -147,28 +141,6 @@ public class ProfileActivity extends BaseToolBarActivity {
     private void setUser(GitHubUser gitHubUser) {
         this.gitHubUser = gitHubUser;
     }
-
-   /* @OnClick(R.id.search_fab)
-    public void searchFabClicked() {
-        showJobSelector();
-    }
-
-    private void showJobSelector() {
-        final String[] options = {"Enter manually", "Search LinkedIn"};
-        new AlertDialog.Builder(this)
-                .setTitle("Job description")
-                .setItems(options, (dialog, index) -> {
-                    switch (index) {
-                        case 0:
-                            startActivity(new Intent(this, ManualActivity.class));
-                            break;
-                        case 1:
-                            startActivity(new Intent(this, LinkedInSearchActivity.class));
-                            break;
-                    }
-                })
-                .create().show();
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

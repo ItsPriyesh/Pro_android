@@ -54,6 +54,13 @@ public class FullUserStats {
         return new FullUserStats(commits, weeksOfCodeByRepo, languagesByRepo, repos);
     }
 
+    public FullUserStats addLanguagesByRepo(Repo repo, List<Language> languages) {
+        Map<Repo, List<Language>> newLanguagesByRepo = new HashMap<>();
+        newLanguagesByRepo.putAll(languagesByRepo);
+        newLanguagesByRepo.put(repo, languages);
+        return setLanguagesByRepo(newLanguagesByRepo);
+    }
+
     public Set<Repo> getRepos() {
         return repos;
     }

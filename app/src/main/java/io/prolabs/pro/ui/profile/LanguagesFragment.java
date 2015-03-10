@@ -18,14 +18,10 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.prolabs.pro.R;
-import io.prolabs.pro.api.github.GitHubApi;
-import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.eventing.GitHubReceiver;
-import io.prolabs.pro.eventing.LanguagesReceived;
+import io.prolabs.pro.algo.FullUserStats;
+import io.prolabs.pro.eventing.GitHubDataAggregator;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.GitHubUser;
-import retrofit.RetrofitError;
 import timber.log.Timber;
 
 public class LanguagesFragment extends Fragment {
@@ -33,10 +29,9 @@ public class LanguagesFragment extends Fragment {
     private static final long UPDATE_LANG_DELAY = 1000;
     @InjectView(R.id.languageList)
     ListView languageListView;
-    private GitHubService gitHubService;
-    private GitHubReceiver gitHubReceiver;
+    private GitHubDataAggregator gitHubAggregator;
     private volatile boolean updating = false;
-    private HashMap<Repo, List<Language>> languagesByRepo = new HashMap<>();
+    private volatile Map<Repo, List<Language>> languagesByRepo = new HashMap<>();
 
     public LanguagesFragment() {
         // Required empty public constructor
@@ -47,18 +42,16 @@ public class LanguagesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_languages, container, false);
         ButterKnife.inject(this, view);
 
-        gitHubService = GitHubApi.getService();
-        gitHubReceiver = GitHubReceiver.getInstance();
-        gitHubReceiver.register(this);
-
-        gitHubReceiver.requestAllStats();
+        gitHubAggregator = GitHubDataAggregator.getInstance();
+        gitHubAggregator.register(this);
 
         return view;
     }
 
     @Subscribe
-    public synchronized void receivedALanguage(LanguagesReceived received) {
-        languagesByRepo.put(received.getRepo(), received.getLanguages());
+    public synchronized void receivedStats(FullUserStats stats) {
+        Map<Repo, List<Language>> receivedLanguages = stats.getLanguagesByRepo();
+        languagesByRepo = receivedLanguages;
         if (!updating) {
             updating = true;
             new Handler().postDelayed(this::updateUI, UPDATE_LANG_DELAY);
