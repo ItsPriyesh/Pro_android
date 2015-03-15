@@ -19,7 +19,7 @@ import io.prolabs.pro.models.github.Repo;
 public class SimpleXpCalculator implements XpCalculator {
 
     private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
-    private static final double MAX_DAYS = 730.0;
+    private static final double MAX_DAYS = 1000.0;
     private static final double SCALE = 0.5;
 
     @Override
@@ -61,13 +61,13 @@ public class SimpleXpCalculator implements XpCalculator {
                 if (Math.abs((activity.getWeek() * 1000) - System.currentTimeMillis()) < ONE_WEEK) {
                     lastTwoWeeks.add(activity);
                 } else {
-                    totalXp += Math.exp((MAX_DAYS - activity.getWeek() * 1000) / (60L * 60L * 24L * 7L)) * activity.getTotalCommits();
+                    totalXp += Math.exp((MAX_DAYS - activity.getWeek() * 1000L) / (60L * 60L * 24L * 7L)) * activity.getTotalCommits();
                 }
             }
         }
         Collections.sort(lastTwoWeeks, (lhs, rhs) -> (int) (rhs.getWeek() - lhs.getWeek()));
         for (CommitActivity activity : lastTwoWeeks) {
-            totalXp += activity.getTotalCommits() * 100;
+            totalXp += activity.getTotalCommits() * 200;
         }
         totalXp += popularity * 5;
         return new UserXp(totalXp);

@@ -11,4 +11,7 @@ public class Tips {
             "Spread the word! The more forks and stars, the better!",
             "Open your sources! We don't analyze private repositories!"
     };
+    public static String getRandomTip() {
+        return TIPS[(int) (Math.floor(Math.random() * TIPS.length))];
+    }
 }

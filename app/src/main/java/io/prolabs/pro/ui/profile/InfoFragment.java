@@ -121,14 +121,14 @@ public class InfoFragment extends Fragment {
 
         TextView tipText = new TextView(getActivity());
         tipText.setLayoutParams(cardParams);
-        tipText.setText(Tips.TIPS[(int) (Math.floor(Math.random() * Tips.TIPS.length))]);
+        tipText.setText(Tips.getRandomTip());
 
         cardView.addView(tipText);
 
         return cardView;
     }
 
-    private final SwipeDismissTouchListener getListener(CardView cardView) {
+    private SwipeDismissTouchListener getListener(CardView cardView) {
         return new SwipeDismissTouchListener(
                 cardView,
                 null,
