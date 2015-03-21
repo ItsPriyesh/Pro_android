@@ -17,4 +17,6 @@
     <string name="title_activity_xp">XpActivity</string>
     <string name="pro_score">Pro\nScore</string>
     <string name="xpPlaceholder">...</string>
+    <string name="tips">Tips</string>
+    <string name="public_repos">Public\nRepos</string>
 </resources>
