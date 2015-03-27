@@ -24,19 +24,19 @@ public interface GitHubService {
     Observable<GitHubUser> getAuthUser();
 
     @GET("/user/repos")
-    void getRepos(@Query("per_page") int reposPerPage, Callback<List<Repo>> callback);
+    Observable<List<Repo>> getRepos(@Query("per_page") int reposPerPage);
 
     @GET("/repos/{user}/{repo}/languages")
-    void getLanguages(@Path("user") String user, @Path("repo") String repo, Callback<JsonElement> callback);
+    Observable<JsonElement> getLanguages(@Path("user") String user, @Path("repo") String repo);
 
     @GET("/repos/{user}/{repo}/stats/commit_activity")
-    void getCommitActivity(@Path("user") String user, @Path("repo") String repo, Callback<List<CommitActivity>> callback);
+    Observable<List<CommitActivity>> getCommitActivity(@Path("user") String user, @Path("repo") String repo);
 
     @GET("/repos/{user}/{repo}/stats/code_frequency")
-    void getCodeFrequency(@Path("user") String user, @Path("repo") String repo, Callback<JsonElement> callback);
+    Observable<JsonElement> getCodeFrequency(@Path("user") String user, @Path("repo") String repo);
 
     // Doesn't take a user; assumes the authenticated user.
     @GET("/gists/public")
-    void getGists(Callback<List<Gist>> callback);
+    Observable<List<Gist>> getGists();
 
 }

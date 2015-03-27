@@ -1,6 +1,5 @@
 package io.prolabs.pro.eventing;
 
-import com.google.gson.JsonElement;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
@@ -9,15 +8,12 @@ import java.util.List;
 
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.models.github.CodeWeek;
-import io.prolabs.pro.models.github.CommitActivity;
-import io.prolabs.pro.models.github.Gist;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Language;
 import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.utils.GitHubUtils;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -40,102 +36,75 @@ public class GitHubRequester {
 
     private void requestCodeWeeksForRepo(final Repo repo) {
         GitHubUser currentUser = GitHubApi.getCurrentUser();
-        GitHubApi.getService().getCodeFrequency(currentUser.getUsername(), repo.getName(), new Callback<JsonElement>() {
-            @Override
-            public void success(JsonElement jsonElement, Response response) {
-                List<CodeWeek> codeWeeks = GitHubUtils.parseCodeFrequencyResponse(jsonElement);
-                bus.post(new CodeWeeksReceived(repo, codeWeeks));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Timber.i("Failed to retrieve codeweeks for repo: " + repo.getName() + ": " + error.getMessage());
-            }
-        });
+        GitHubApi.getService().getCodeFrequency(currentUser.getUsername(), repo.getName())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(jsonElement -> {
+                    List<CodeWeek> codeWeeks = GitHubUtils.parseCodeFrequencyResponse(jsonElement);
+                    bus.post(new CodeWeeksReceived(repo, codeWeeks));
+                }, e -> Timber.i("Failed to retrieve codeweeks for repo: " +
+                        repo.getName() + ": " + e.getMessage()));
     }
 
     public void requestAllStats() {
         requestGists();
-        GitHubApi.getService().getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
-            @Override
-            public void success(List<Repo> repos, Response response) {
-                bus.post(new ReposReceived(new HashSet<>(repos)));
-                for (Repo repo : repos) {
-                    requestLanguageForRepo(repo);
-                    requestCodeWeeksForRepo(repo);
-                    requestCommitHistoryForRepo(repo);
-                }
-            }
+        GitHubApi.getService().getRepos(GitHubApi.MAX_REPOS_PER_PAGE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(repos -> {
+                    bus.post(new ReposReceived(new HashSet<>(repos)));
+                    for (Repo repo : repos) {
+                        requestLanguageForRepo(repo);
+                        requestCodeWeeksForRepo(repo);
+                        requestCommitHistoryForRepo(repo);
+                    }
+                }, this::logError);
 
-            @Override
-            public void failure(RetrofitError error) {
-                logError(error);
-            }
-        });
     }
 
     public void requestCommitHistoryForRepo(Repo repo) {
         GitHubUser user = GitHubApi.getCurrentUser();
-        GitHubApi.getService().getCommitActivity(user.getUsername(), repo.getName(), new Callback<List<CommitActivity>>() {
-            @Override
-            public void success(List<CommitActivity> commitActivity, Response response) {
-                bus.post(new CommitsReceived(repo, commitActivity));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Timber.i("Failed to retrieve commit history for " + repo.getName() + ": " + error.getMessage());
-            }
-        });
+        GitHubApi.getService().getCommitActivity(user.getUsername(), repo.getName())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(commitActivity -> bus.post(new CommitsReceived(repo, commitActivity)),
+                        e -> Timber.i("Failed to retrieve commit history for " +
+                                repo.getName() + ": " + e.getMessage()));
     }
-
 
     public void requestLanguageForRepo(final Repo repo) {
         GitHubUser user = GitHubApi.getCurrentUser();
-        if (user == null) {
-            return;
-        }
-        GitHubApi.getService().getLanguages(user.getUsername(), repo.getName(), new Callback<JsonElement>() {
-            @Override
-            public void success(JsonElement jsonElement, Response response) {
-                List<Language> languages = GitHubUtils.parseLanguageResponse(jsonElement);
-                bus.post(new LanguagesReceived(repo, languages));
-                for (Language language : languages)
-                    Timber.i("Language received: " + language.getName() + " : " + language.getBytes());
-            }
+        if (user == null) return;
 
-            @Override
-            public void failure(RetrofitError error) {
-                logRepoError(repo, error);
-            }
-        });
+        GitHubApi.getService().getLanguages(user.getUsername(), repo.getName())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(jsonElement -> {
+                    List<Language> languages = GitHubUtils.parseLanguageResponse(jsonElement);
+                    bus.post(new LanguagesReceived(repo, languages));
+                    for (Language l : languages)
+                        Timber.i("Language received: " + l.getName() + " : " + l.getBytes());
+                }, e -> logRepoError(repo, e));
     }
 
     public void requestGists() {
-        GitHubApi.getService().getGists(new Callback<List<Gist>>() {
-
-            @Override
-            public void success(List<Gist> gists, Response response) {
-                bus.post(new GistsReceived(gists));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                logError(error);
-            }
-        });
+        GitHubApi.getService().getGists()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(gists -> bus.post(new GistsReceived(gists)), this::logError);
     }
 
-    private boolean is404(RetrofitError error) {
-        return error.getKind() == RetrofitError.Kind.HTTP &&
-                error.getResponse().getStatus() == 404;
+    private boolean is404(Throwable error) {
+        //  return error.getKind() == RetrofitError.Kind.HTTP &&
+        //        error.getResponse().getStatus() == 404;
+        return false;
     }
 
-    private void logError(RetrofitError error) {
+    private void logError(Throwable error) {
         Timber.i(error.getMessage());
     }
 
-    private void logRepoError(Repo repo, RetrofitError error) {
+    private void logRepoError(Repo repo, Throwable error) {
         if (!is404(error))
             Timber.i("Failed to get repo: " + repo.getName());
         else
