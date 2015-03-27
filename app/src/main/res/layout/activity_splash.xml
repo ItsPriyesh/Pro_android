@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/toolbar" />
+
+    <TextView
+        android:id="@+id/loginPrompt"
+        android:visibility="invisible"
+        android:layout_margin="32dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Login using GitHub to get started with Pro!" />
+
+    <FrameLayout
+        android:layout_centerInParent="true"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/splashContainer"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_centerInParent="true"
+            style="@style/ProgressBar.Custom.Download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textSize="12dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Preparing important things..."
+            android:layout_below="@id/progress"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/networkErrorContainer"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/sadCloud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sad_cloud" />
+
+        <TextView
+            android:id="@+id/noInternetMessage"
+            android:textSize="12dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Pro was unable to connect to the interwebz."
+            android:layout_below="@id/sadCloud"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/retry"
+            android:text="Retry"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/noInternetMessage"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/primary_accent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</RelativeLayout>

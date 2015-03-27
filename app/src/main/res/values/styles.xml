@@ -12,6 +12,11 @@
 
     </style>
 
+    <style name="AppTheme.Main" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/black_10_opacity</item>
+    </style>
+
     <style name="AppTheme.Profile" parent="AppTheme" >
         <item name="colorPrimaryDark">@color/primary_accent</item>
     </style>

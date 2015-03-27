@@ -9,8 +9,7 @@ import android.support.v4.app.ActivityCompat;
 
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
-import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.ui.MainActivity;
+import io.prolabs.pro.ui.SplashActivity;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -33,7 +32,7 @@ public class SettingsFragment extends PreferenceFragment {
     private void logout() {
         GitHubApi.clearCurrentAuth();
         GitHubApi.deleteService();
-        startActivity(new Intent(getActivity(), MainActivity.class));
+        startActivity(new Intent(getActivity(), SplashActivity.class));
         ActivityCompat.finishAffinity(getActivity());
     }
 }

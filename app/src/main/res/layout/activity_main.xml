@@ -1,86 +1,80 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <include
-        layout="@layout/app_bar"
-        android:id="@+id/toolbar" />
-
-    <TextView
-        android:id="@+id/loginPrompt"
-        android:visibility="invisible"
-        android:layout_margin="32dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:textSize="14dp"
-        android:fontFamily="sans-serif-light"
-        android:text="Login using GitHub to get started with Pro!" />
-
-    <FrameLayout
-        android:layout_centerInParent="true"
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
-        android:visibility="invisible"
-        android:id="@+id/splashContainer"
-        android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:clickable="true">
 
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_centerInParent="true"
-            style="@style/ProgressBar.Custom.Download"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <include
+            layout="@layout/app_bar"
+            android:id="@+id/toolbar" />
 
-        <TextView
-            android:textSize="12dp"
-            android:fontFamily="sans-serif-light"
-            android:text="Preparing important things..."
-            android:layout_below="@id/progress"
-            android:gravity="center"
+        <FrameLayout
+            android:layout_below="@id/toolbar"
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
+
     </RelativeLayout>
 
-    <RelativeLayout
-        android:visibility="invisible"
-        android:id="@+id/networkErrorContainer"
-        android:layout_centerInParent="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <io.prolabs.pro.ui.common.ScrimInsetsFrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scrimInsetsFrameLayout"
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/white_100_opacity"
+        android:elevation="10dp"
+        android:fitsSystemWindows="true"
+        app:insetForeground="#4000">
 
-        <ImageView
-            android:id="@+id/sadCloud"
+        <LinearLayout
+            android:layout_marginTop="25dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sad_cloud" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/noInternetMessage"
-            android:textSize="12dp"
-            android:fontFamily="sans-serif-light"
-            android:text="Pro was unable to connect to the interwebz."
-            android:layout_below="@id/sadCloud"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:id="@+id/header"
+                android:clipToPadding="false"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/retry"
-            android:text="Retry"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/noInternetMessage"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="@color/primary_accent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-</RelativeLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/profile_pic"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@id/profile_pic"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/username"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </io.prolabs.pro.ui.common.ScrimInsetsFrameLayout>
+</android.support.v4.widget.DrawerLayout>
+

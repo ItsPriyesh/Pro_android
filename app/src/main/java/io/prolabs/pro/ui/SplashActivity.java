@@ -15,26 +15,30 @@ import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.login.LoginFragment;
-import io.prolabs.pro.ui.profile.ProfileActivity;
+import io.prolabs.pro.ui.main.MainActivity;
 import io.prolabs.pro.utils.NetworkUtils;
 import io.prolabs.pro.utils.ViewUtils;
 
-public class MainActivity extends BaseToolBarActivity {
+public class SplashActivity extends BaseToolBarActivity {
+
+    @InjectView(R.id.splashContainer)
+    View splashContainer;
+
+    @InjectView(R.id.networkErrorContainer)
+    View networkErrorContainer;
+
+    @InjectView(R.id.loginPrompt)
+    View loginPrompt;
 
     final Handler handler = new Handler();
     final Runnable authCheckComplete = this::onAuthCheckComplete;
-    @InjectView(R.id.splashContainer)
-    View splashContainer;
-    @InjectView(R.id.networkErrorContainer)
-    View networkErrorContainer;
-    @InjectView(R.id.loginPrompt)
-    View loginPrompt;
+
     private boolean githubAuthExists = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_splash);
         setToolbarTitle("Pro");
 
         checkForInternet();
@@ -51,6 +55,7 @@ public class MainActivity extends BaseToolBarActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     @OnClick(R.id.retry)
     public void retryButtonClicked() {
         checkForInternet();
@@ -84,7 +89,7 @@ public class MainActivity extends BaseToolBarActivity {
         if (githubAuthExists) {
             GitHubApi.getService(Hawk.get(ProApp.GITHUB_AUTH_KEY));
             GitHubApi.setCurrentUser(Hawk.get(ProApp.GITHUB_USER));
-            startActivity(new Intent(this, ProfileActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {
             setupLoginFragment();
