@@ -17,9 +17,8 @@ import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.profile.ProfileActivity;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseToolBarActivity {
 
@@ -42,18 +41,16 @@ public class MainActivity extends BaseToolBarActivity {
 
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
 
-        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser gitHubUser, Response response) {
-                Picasso.with(MainActivity.this).load(gitHubUser.getAvatarUrl()).into(circleImageView);
-                username.setText(gitHubUser.getUsername());
-                name.setText(gitHubUser.getName());
-            }
+        GitHubApi.getService().getAuthUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::setupHeader);
+    }
 
-            @Override
-            public void failure(RetrofitError error) {
-            }
-        });
+    private void setupHeader(GitHubUser user) {
+        Picasso.with(MainActivity.this).load(user.getAvatarUrl()).into(circleImageView);
+        username.setText(user.getUsername());
+        name.setText(user.getName());
     }
 
     @OnClick(R.id.header)

@@ -31,6 +31,8 @@ import io.prolabs.pro.ui.settings.SettingsActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ProfileActivity extends BaseToolBarActivity {
 
@@ -83,19 +85,16 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void getAuthUser() {
-        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser gitHubUser, Response response) {
-                setUser(gitHubUser);
-                getAuthUserRepos();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                progressDialog.dismiss();
-                handleApiCallError();
-            }
-        });
+        GitHubApi.getService().getAuthUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    setUser(user);
+                    getAuthUserRepos();
+                }, e -> {
+                    progressDialog.dismiss();
+                    handleApiCallError();
+                });
     }
 
     private void getAuthUserRepos() {

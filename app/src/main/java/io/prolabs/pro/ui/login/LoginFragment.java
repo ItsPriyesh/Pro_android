@@ -10,21 +10,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.Date;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.models.github.GitHubUser;
-import io.prolabs.pro.models.github.Limit;
-import io.prolabs.pro.models.github.Limits;
 import io.prolabs.pro.ui.profile.ProfileActivity;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class LoginFragment extends Fragment {
@@ -73,7 +67,7 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(getActivity(), "No more API calls! Try logging in after: " + resetDate, Toast.LENGTH_SHORT).show();
                     return;
                 } else {*/
-                    loginGitHub(username, password);
+        loginGitHub(username, password);
                 /*}
             }
 
@@ -86,23 +80,17 @@ public class LoginFragment extends Fragment {
 
     private void loginGitHub(String username, String password) {
         gitHubService = GitHubApi.getService(username, password);
-
-        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser user, Response response) {
-                GitHubApi.saveCurrentAuth(user);
-                startActivity(new Intent(getActivity(), ProfileActivity.class));
-                getActivity().finish();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                handleLoginError(error);
-            }
-        });
+        gitHubService.getAuthUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                            GitHubApi.saveCurrentAuth(user);
+                            startActivity(new Intent(getActivity(), ProfileActivity.class));
+                            getActivity().finish();
+                        }, this::handleLoginError);
     }
 
-    private void handleLoginError(RetrofitError error) {
+    private void handleLoginError(Throwable error) {
         Timber.i("Login error: " + error.getMessage());
         new AlertDialog.Builder(getActivity())
                 .setTitle("Login failed")
