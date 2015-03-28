@@ -10,21 +10,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.Date;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
-import io.prolabs.pro.models.github.GitHubUser;
-import io.prolabs.pro.models.github.Limit;
-import io.prolabs.pro.models.github.Limits;
 import io.prolabs.pro.ui.profile.ProfileActivity;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static io.prolabs.pro.utils.CallbackUtils.callback;
@@ -98,8 +92,7 @@ public class LoginFragment extends Fragment {
                 this::handleLoginError
         ));
     }
-
-    private void handleLoginError(RetrofitError error) {
+    private void handleLoginError(Throwable error) {
         Timber.i("Login error: " + error.getMessage());
         new AlertDialog.Builder(getActivity())
                 .setTitle("Login failed")

@@ -14,8 +14,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -24,13 +22,11 @@ import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.api.github.GitHubService;
 import io.prolabs.pro.eventing.GitHubRequester;
 import io.prolabs.pro.models.github.GitHubUser;
-import io.prolabs.pro.models.github.Repo;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.common.SlidingTabLayout;
 import io.prolabs.pro.ui.settings.SettingsActivity;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static io.prolabs.pro.utils.CallbackUtils.callback;
 
@@ -63,6 +59,7 @@ public class ProfileActivity extends BaseToolBarActivity {
         setContentView(R.layout.activity_profile);
         ButterKnife.inject(this);
 
+        showToolbarBackButton();
         disableToolbarElevation();
 
         infoFragment = new InfoFragment();
@@ -186,7 +183,7 @@ public class ProfileActivity extends BaseToolBarActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            return tabTitles.length;
         }
     }
 }

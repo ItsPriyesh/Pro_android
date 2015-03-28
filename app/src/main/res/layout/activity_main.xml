@@ -18,7 +18,13 @@
             android:layout_below="@id/toolbar"
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+            <TextView
+                android:gravity="center"
+                android:text="Feed can go here"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
     </RelativeLayout>
 
@@ -33,6 +39,7 @@
         app:insetForeground="#4000">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_marginTop="25dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -41,6 +48,7 @@
                 android:id="@+id/header"
                 android:clipToPadding="false"
                 android:padding="16dp"
+                android:background="?attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -73,6 +81,12 @@
                 </LinearLayout>
             </RelativeLayout>
 
+            <ListView
+                android:id="@+id/drawer_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </ListView>
         </LinearLayout>
 
     </io.prolabs.pro.ui.common.ScrimInsetsFrameLayout>

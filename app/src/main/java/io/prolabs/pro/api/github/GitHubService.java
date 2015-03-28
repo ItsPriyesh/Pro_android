@@ -4,16 +4,16 @@ import com.google.gson.JsonElement;
 
 import java.util.List;
 
-import io.prolabs.pro.models.github.CodeWeek;
 import io.prolabs.pro.models.github.CommitActivity;
 import io.prolabs.pro.models.github.Gist;
+import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.models.github.Limits;
 import io.prolabs.pro.models.github.Repo;
-import io.prolabs.pro.models.github.GitHubUser;
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import rx.Observable;
 
 public interface GitHubService {
 
@@ -38,5 +38,6 @@ public interface GitHubService {
     // Doesn't take a user; assumes the authenticated user.
     @GET("/gists/public")
     void getGists(Callback<List<Gist>> callback);
+
 
 }

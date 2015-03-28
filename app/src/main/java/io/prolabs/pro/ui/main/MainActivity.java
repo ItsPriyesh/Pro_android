@@ -1,9 +1,11 @@
 package io.prolabs.pro.ui.main;
 
 import android.content.Intent;
-
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -12,15 +14,15 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnItemClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.prolabs.pro.R;
 import io.prolabs.pro.api.github.GitHubApi;
 import io.prolabs.pro.models.github.GitHubUser;
 import io.prolabs.pro.ui.common.BaseToolBarActivity;
 import io.prolabs.pro.ui.profile.ProfileActivity;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static io.prolabs.pro.utils.CallbackUtils.callback;
 
@@ -38,12 +40,19 @@ public class MainActivity extends BaseToolBarActivity {
     @InjectView(R.id.name)
     TextView name;
 
+    private ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setToolbarTitle("Pro");
+
+        drawerToggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
 
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
+        drawerLayout.setDrawerListener(drawerToggle);
 
         GitHubApi.getService().getAuthUser(callback(
                 gitHubUser -> {
@@ -58,6 +67,13 @@ public class MainActivity extends BaseToolBarActivity {
         ));
     }
 
+    private void setupHeader(GitHubUser user) {
+        Picasso.with(MainActivity.this).load(user.getAvatarUrl()).into(circleImageView);
+        username.setText(user.getUsername());
+        name.setText(user.getName());
+    }
+
+    @SuppressWarnings("unused")
     @OnClick(R.id.header)
     public void openProfile() {
         startActivity(new Intent(this, ProfileActivity.class));
@@ -83,5 +99,35 @@ public class MainActivity extends BaseToolBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("unused")
+    @OnItemClick(R.id.drawer_list)
+    public void onNavItemClicked(int position) {
+        switch (position) {
+
+        }
+        drawerLayout.closeDrawers();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)) {
+            drawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
     }
 }
