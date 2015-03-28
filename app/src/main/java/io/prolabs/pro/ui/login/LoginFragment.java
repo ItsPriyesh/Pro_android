@@ -27,6 +27,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
+import static io.prolabs.pro.utils.CallbackUtils.callback;
+
 public class LoginFragment extends Fragment {
 
     @InjectView(R.id.usernameInput)
@@ -73,7 +75,7 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(getActivity(), "No more API calls! Try logging in after: " + resetDate, Toast.LENGTH_SHORT).show();
                     return;
                 } else {*/
-                    loginGitHub(username, password);
+        loginGitHub(username, password);
                 /*}
             }
 
@@ -87,19 +89,14 @@ public class LoginFragment extends Fragment {
     private void loginGitHub(String username, String password) {
         gitHubService = GitHubApi.getService(username, password);
 
-        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser user, Response response) {
-                GitHubApi.saveCurrentAuth(user);
-                startActivity(new Intent(getActivity(), ProfileActivity.class));
-                getActivity().finish();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                handleLoginError(error);
-            }
-        });
+        GitHubApi.getService().getAuthUser(callback(
+                user -> {
+                    GitHubApi.saveCurrentAuth(user);
+                    startActivity(new Intent(getActivity(), ProfileActivity.class));
+                    getActivity().finish();
+                },
+                this::handleLoginError
+        ));
     }
 
     private void handleLoginError(RetrofitError error) {

@@ -1,6 +1,7 @@
 package io.prolabs.pro.ui.main;
 
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -20,6 +21,8 @@ import io.prolabs.pro.ui.profile.ProfileActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static io.prolabs.pro.utils.CallbackUtils.callback;
 
 public class MainActivity extends BaseToolBarActivity {
 
@@ -42,18 +45,17 @@ public class MainActivity extends BaseToolBarActivity {
 
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
 
-        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser gitHubUser, Response response) {
-                Picasso.with(MainActivity.this).load(gitHubUser.getAvatarUrl()).into(circleImageView);
-                username.setText(gitHubUser.getUsername());
-                name.setText(gitHubUser.getName());
-            }
+        GitHubApi.getService().getAuthUser(callback(
+                gitHubUser -> {
+                    Picasso.with(MainActivity.this).load(gitHubUser.getAvatarUrl()).into(circleImageView);
+                    username.setText(gitHubUser.getUsername());
+                    name.setText(gitHubUser.getName());
+                },
 
-            @Override
-            public void failure(RetrofitError error) {
-            }
-        });
+                error -> {
+                    // Do nothing
+                }
+        ));
     }
 
     @OnClick(R.id.header)

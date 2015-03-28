@@ -32,6 +32,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static io.prolabs.pro.utils.CallbackUtils.callback;
+
 public class ProfileActivity extends BaseToolBarActivity {
 
     @InjectView(R.id.avatar)
@@ -83,35 +85,31 @@ public class ProfileActivity extends BaseToolBarActivity {
     }
 
     private void getAuthUser() {
-        GitHubApi.getService().getAuthUser(new Callback<GitHubUser>() {
-            @Override
-            public void success(GitHubUser gitHubUser, Response response) {
-                setUser(gitHubUser);
-                getAuthUserRepos();
-            }
+        GitHubApi.getService().getAuthUser(callback(
+                gitHubUser -> {
+                    setUser(gitHubUser);
+                    getAuthUserRepos();
+                },
 
-            @Override
-            public void failure(RetrofitError error) {
-                progressDialog.dismiss();
-                handleApiCallError();
-            }
-        });
+                error -> {
+                    progressDialog.dismiss();
+                    handleApiCallError();
+                }
+        ));
     }
 
     private void getAuthUserRepos() {
-        GitHubApi.getService().getRepos(GitHubApi.MAX_REPOS_PER_PAGE, new Callback<List<Repo>>() {
-            @Override
-            public void success(List<Repo> repos, Response response) {
-                requestData();
-                setupInterface();
-            }
+        GitHubApi.getService().getRepos(GitHubApi.MAX_REPOS_PER_PAGE, callback(
+                repos -> {
+                    requestData();
+                    setupInterface();
+                },
 
-            @Override
-            public void failure(RetrofitError error) {
-                progressDialog.dismiss();
-                handleApiCallError();
-            }
-        });
+                error -> {
+                    progressDialog.dismiss();
+                    handleApiCallError();
+                }
+        ));
     }
 
     private void requestData() {
